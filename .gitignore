@@ -136,7 +136,9 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
+bibs/
 crawled/
+*.bib
 .vscode/
 log.txt
+
