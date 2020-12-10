@@ -141,4 +141,5 @@ crawled/
 *.bib
 .vscode/
 log.txt
+data.zip
 
