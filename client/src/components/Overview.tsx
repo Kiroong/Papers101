@@ -10,7 +10,7 @@ import SummaryView from "./SummaryView";
 const Overview: React.FC = () => {
   const paperEntries = useRootSelector(state => state.overview.paperEntries)
   const dispatch = useThunkDispatch();
-  if (!paperEntries) {
+  if (!paperEntries.length) {
     dispatch(actionOverview.getData.thunk())
   }
   console.log({ data: paperEntries })

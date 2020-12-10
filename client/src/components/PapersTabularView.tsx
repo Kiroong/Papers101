@@ -18,8 +18,8 @@ const PapersTabularView: React.FC = () => {
   const numHistories = 2;
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
-  const paperEntries = useRootSelector((state) =>
-    state.overview.paperEntries?.slice(0, 100)
+  const paperEntries = useRootSelector(
+    (state) => state.overview.paperEntries.slice(0, 100)
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
 
@@ -77,9 +77,7 @@ const PapersTabularView: React.FC = () => {
                       ...paperEntries.slice(0, 5).reverse(),
                     ]}
                     markedEntries={markedPapers}
-                    onSelect={() => {
-
-                    }}
+                    onSelect={() => {}}
                     offsetHeight={40}
                     cellHeight={20}
                   />
@@ -93,8 +91,7 @@ const PapersTabularView: React.FC = () => {
                     ]}
                     toEntries={paperEntries}
                     markedEntries={markedPapers}
-                    onSelect={() => {
-                    }}
+                    onSelect={() => {}}
                     offsetHeight={40}
                     cellHeight={20}
                   />

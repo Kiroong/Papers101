@@ -19,7 +19,7 @@ export interface PaperEntry {
 
 
 export interface OverviewState {
-  paperEntries: PaperEntry[] | null;
+  paperEntries: PaperEntry[];
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
   keywords: string[];
