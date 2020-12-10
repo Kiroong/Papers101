@@ -119,7 +119,7 @@ const HistoryLink: React.FC<Props> = ({
             .classed('cell-history', true)
             .attr('x', 0)
             .attr('y', (d, i) => i * cellHeight)
-            .attr('height', cellHeight)
+            .attr('height', cellHeight*0.8)
             .attr('width', svgWidth / 4)
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
