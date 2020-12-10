@@ -116,7 +116,7 @@ const PapersTabularView: React.FC = () => {
                                     onSelect={() => {
                                         dispatch(
                                             actionOverview.selectHistory(
-                                                historyAfter
+                                                historyBefore
                                             )
                                         )
                                     }}
