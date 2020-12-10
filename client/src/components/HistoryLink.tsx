@@ -23,6 +23,7 @@ function translate(x: number, y: number) {
     return `translate(${x}, ${y})`
 }
 
+
 const HistoryLink: React.FC<Props> = ({
     fromEntries,
     toEntries,
@@ -31,14 +32,74 @@ const HistoryLink: React.FC<Props> = ({
     cellHeight,
     onSelect,
 }) => {
-    const svgHeight: number = offsetHeight + cellHeight * 100
+    const svgHeight: number = cellHeight * 100
     const svgWidth: number = 200
     const root = useRef<HTMLDivElement>(null)
     let selectHistory = () => {}
-    /*
+
+    let handleClick = (event: any, d: any) => {
+      let _root = d3.select(root.current).select('svg').select('.history')
+      _root.selectAll('.cell-history')
+      .filter((dd: any) => dd.doi === d.doi)
+      .classed('selected', true)
+      .attr('fill', 'red')
+      .raise()
+
+      _root.selectAll('.line-history')
+      .filter((dd: any) => dd.toDoi === d.doi)
+      .classed('selected', true)
+      .attr('stroke', 'red')
+      .raise()
+    } 
+
+    let handleCellMouseover = (event: any, d: any) => {
+      let _root = d3.select(root.current).select('svg').select('.history')
+      _root.selectAll('.cell-history')
+      .filter((dd: any) => dd.doi === d.doi)
+      .classed('hovered', true)
+      .attr('fill', 'green')
+      .raise()
+
+      _root.selectAll('.line-history')
+      .filter((dd: any) => dd.toDoi === d.doi)
+      .classed('hovered', true)
+      .attr('stroke', 'green')
+      .raise()
+    } 
+
+    let handleLinkMouseover = (event: any, d: any) => {
+      let _root = d3.select(root.current).select('svg').select('.history')
+      _root.selectAll('.cell-history')
+      .filter((dd: any) => dd.doi === d.toDoi)
+      .classed('hovered', true)
+      .attr('fill', 'green')
+      .raise()
+
+      _root.selectAll('.line-history')
+      .filter((dd: any) => dd.toDoi === d.toDoi)
+      .classed('hovered', true)
+      .attr('stroke', 'green')
+      .raise()
+    } 
+
+    let handleMouseout = (event: any, d: any) => {
+      let _root = d3.select(root.current).select('svg').select('.history')
+      _root.selectAll('.cell-history')
+      .selectAll('.hovered')
+      .classed('hovered', false)
+      .attr('fill', 'white')
+
+      _root.selectAll('.line-history')
+      .selectAll('.hovered')
+      .classed('hovered', false)
+      .attr('stroke', 'black')
+
+    } 
+
+    
     useEffect(() => {
-        console.log('fromEntries')
-        let _root = d3.select(root.current)
+        console.log('cell')
+        let _root = d3.select(root.current).select('svg').select('.history')
 
         _root
             .selectAll('.cell-history')
@@ -51,12 +112,14 @@ const HistoryLink: React.FC<Props> = ({
             .attr('width', svgWidth / 4)
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
-            .attr('fill', 'red')
+            .attr('fill', 'white')
+            .on('click', (e, d) => handleClick(e, d))
+            //.on('mouseover', (e, d) => handleCellMouseover(e, d))
+            //.on('mouseout', (e, d) => handleMouseout(e, d))
     }, [fromEntries])
-    */
-   /*
+
     useEffect(() => {
-        let _root = d3.select(root.current)
+        let _root = d3.select(root.current).select('svg').select('.history')
         let _lineData: HistoryLine[] = []
         toEntries.forEach((te, ti) => {
             let fi = fromEntries.findIndex((fe) => fe.doi === te.doi)
@@ -73,42 +136,74 @@ const HistoryLink: React.FC<Props> = ({
             .data(_lineData)
             .join('line')
             .classed('line-history', true)
-            .attr('x1', svgWidth / 4)
+            .attr('x1', (d: HistoryLine) =>
+                d.fromIndex >= 0 ? svgWidth / 4 : svgWidth * (3 / 4)
+            )
             .attr('y1', (d: HistoryLine) =>
-                d.fromIndex >= 0 ? d.fromIndex * cellHeight : 100 * cellHeight
+                d.fromIndex >= 0
+                    ? (d.fromIndex+0.5) * cellHeight
+                    : (d.toIndex+0.5) * cellHeight
             )
             .attr('x2', svgWidth)
-            .attr('y2', (d: HistoryLine) => d.toIndex * cellHeight)
-            .attr('stroke', 'black')
-            .attr('stroke-width', cellHeight)
-            .attr('opacity', 0.6)
+            .attr('y2', (d: HistoryLine) => (d.toIndex+0.5) * cellHeight)
+            .attr('stroke', d => markedEntries.map(me => me.doi).includes(d.toDoi)? 'red': 'black')
+            .attr('stroke-width', cellHeight * 0.8)
+            .attr('stroke-linecap', 'round')
+            .attr('opacity', 0.3)
+            .on('click', (e, d) => handleClick(e, d))
+            //.on('mouseover', (e, d) => handleLinkMouseover(e, d))
+            //.on('mouseout', (e, d) => handleMouseout(e, d))
     }, [toEntries])
-      */
-    useEffect(() => {}, [markedEntries])
+
+    useEffect(() => {
+
+      let _root = d3.select(root.current).select('svg').select('.history')
+
+      _root.selectAll('.cell-history')
+        .filter((d: any) => {
+          return  markedEntries.map(me => me.doi).includes(d.doi)
+        })
+        .attr('fill', 'red')
+        .raise()
+
+        _root.selectAll('.line-history')
+        .filter((d: any) => {
+          return  markedEntries.map(me => me.doi).includes(d.toDoi)
+        })
+        .attr('stroke', 'red')
+        .raise()
+
+    }, [markedEntries])
 
     useEffect(() => {}, [offsetHeight, cellHeight])
 
     let matchToFrom = (toDoi: string): number => {
-      return fromEntries.findIndex((fe) => fe.doi === toDoi)
+        return fromEntries.findIndex((fe) => fe.doi === toDoi)
     }
     return (
         <div ref={root} style={{ width: svgWidth }}>
+            <div
+                className={'history-header'}
+                style={{width:  svgWidth, height: offsetHeight}}
+            >
+                <button onClick={selectHistory}> Select </button>
+            </div>
             <svg height={svgHeight} width={svgWidth}>
-                <g
-                    className={'history-header'}
-                    height={offsetHeight}
-                    width={svgWidth}
-                >
-                    <text> History </text>
-                    <button onClick={selectHistory}> Select </button>
-                </g>
                 <g
                     className={'history'}
                     height={cellHeight * 100}
                     width={svgWidth}
-                    transform={translate(0, offsetHeight)}
-                >
-                    {fromEntries.map((fe, fi) => (
+                ></g>
+            </svg>
+        </div>
+    )
+}
+
+export default HistoryLink
+
+/*
+
+ {fromEntries.map((fe, fi) => (
                         <rect
                             className={'cell-history'}
                             width={svgWidth / 4}
@@ -130,13 +225,7 @@ const HistoryLink: React.FC<Props> = ({
                             y2={(matchToFrom(te.doi)+0.5)*cellHeight}
                             stroke={'black'}
                             stroke-width={cellHeight*0.8}
-                            opacity={0.6}
+                            opacity={0.3}
                         />
                     ))}
-                </g>
-            </svg>
-        </div>
-    )
-}
-
-export default HistoryLink
+*/
