@@ -67,7 +67,7 @@ const PapersTabularView: React.FC = () => {
               onEsc={() => setShowWeightModal(false)}
               onClickOutside={() => setShowWeightModal(false)}
             >
-              <AdjustWeightModal />
+              <AdjustWeightModal onClose={() => setShowWeightModal(false)} />
             </Layer>
           )}
         </Box>

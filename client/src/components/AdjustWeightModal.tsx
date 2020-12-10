@@ -4,8 +4,14 @@ import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { useRootSelector } from "../redux/state/root-state";
 
-const AdjustWeightModal: React.FC = () => {
-  const weights = useRootSelector((state) => state.overview.weights);
+interface Props {
+  onClose: () => any;
+}
+
+const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
+  const [weights, setWeights] = useState(
+    useRootSelector((state) => state.overview.weights)
+  );
   const dispatch = useThunkDispatch();
   return (
     <Box direction="column" pad="medium">
@@ -14,7 +20,15 @@ const AdjustWeightModal: React.FC = () => {
         <input
           type="number"
           value={weights.keywordSimilarity.maxVal}
-          onChange={(e) => (weights.keywordSimilarity.maxVal = +e.target.value)}
+          onChange={(e) =>
+            setWeights({
+              ...weights,
+              keywordSimilarity: {
+                ...weights.keywordSimilarity,
+                maxVal: +e.target.value,
+              },
+            })
+          }
         />
         {weights.keywordSimilarity.components.map(({ keyword, weight }, i) => (
           <>
@@ -23,8 +37,21 @@ const AdjustWeightModal: React.FC = () => {
               style={{ marginLeft: 40 }}
               value={weight}
               onChange={(e) =>
-                (weights.keywordSimilarity.components[i].weight = +e.target
-                  .value)
+                setWeights({
+                  ...weights,
+                  keywordSimilarity: {
+                    ...weights.keywordSimilarity,
+                    components: weights.keywordSimilarity.components.map(
+                      (x, _i) =>
+                        i !== _i
+                          ? x
+                          : {
+                              ...x,
+                              weight: +e.target.value,
+                            }
+                    ),
+                  },
+                })
               }
             />
           </>
@@ -35,7 +62,13 @@ const AdjustWeightModal: React.FC = () => {
           type="number"
           value={weights.seedPaperSimilarity.maxVal}
           onChange={(e) =>
-            (weights.seedPaperSimilarity.maxVal = +e.target.value)
+            setWeights({
+              ...weights,
+              seedPaperSimilarity: {
+                ...weights.seedPaperSimilarity,
+                maxVal: +e.target.value,
+              },
+            })
           }
         />
         {weights.seedPaperSimilarity.components.map(({ entry, weight }, i) => (
@@ -54,8 +87,21 @@ const AdjustWeightModal: React.FC = () => {
               style={{ marginLeft: 40 }}
               value={weight}
               onChange={(e) =>
-                (weights.seedPaperSimilarity.components[i].weight = +e.target
-                  .value)
+                setWeights({
+                  ...weights,
+                  seedPaperSimilarity: {
+                    ...weights.seedPaperSimilarity,
+                    components: weights.seedPaperSimilarity.components.map(
+                      (x, _i) =>
+                        i !== _i
+                          ? x
+                          : {
+                              ...x,
+                              weight: +e.target.value,
+                            }
+                    ),
+                  },
+                })
               }
             />
           </>
@@ -66,36 +112,65 @@ const AdjustWeightModal: React.FC = () => {
           type="number"
           value={weights.referencedBySeedPapers.maxVal}
           onChange={(e) =>
-            (weights.referencedBySeedPapers.maxVal = +e.target.value)
+            setWeights({
+              ...weights,
+              referencedBySeedPapers: {
+                ...weights.referencedBySeedPapers,
+                maxVal: +e.target.value,
+              },
+            })
           }
         />
-        {weights.referencedBySeedPapers.components.map(({ entry, weight }, i) => (
-          <>
-            <div
-              style={{
-                paddingLeft: 40,
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-              }}
-            >
-              {entry.title}
-            </div>
-            <input style={{ marginLeft: 40 }} value={weight}
-              onChange={(e) =>
-                (weights.referencedBySeedPapers.components[i].weight = +e.target
-                  .value)
-              }
-            />
-          </>
-        ))}
+        {weights.referencedBySeedPapers.components.map(
+          ({ entry, weight }, i) => (
+            <>
+              <div
+                style={{
+                  paddingLeft: 40,
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                }}
+              >
+                {entry.title}
+              </div>
+              <input
+                style={{ marginLeft: 40 }}
+                value={weight}
+                onChange={(e) =>
+                  setWeights({
+                    ...weights,
+                    referencedBySeedPapers: {
+                      ...weights.referencedBySeedPapers,
+                      components: weights.referencedBySeedPapers.components.map(
+                        (x, _i) =>
+                          i !== _i
+                            ? x
+                            : {
+                                ...x,
+                                weight: +e.target.value,
+                              }
+                      ),
+                    },
+                  })
+                }
+              />
+            </>
+          )
+        )}
 
         <div>References Seed papers</div>
         <input
           type="number"
           value={weights.referencesSeedPapers.maxVal}
           onChange={(e) =>
-            (weights.referencesSeedPapers.maxVal = +e.target.value)
+            setWeights({
+              ...weights,
+              referencesSeedPapers: {
+                ...weights.referencesSeedPapers,
+                maxVal: +e.target.value,
+              },
+            })
           }
         />
         {weights.referencesSeedPapers.components.map(({ entry, weight }, i) => (
@@ -110,19 +185,40 @@ const AdjustWeightModal: React.FC = () => {
             >
               {entry.title}
             </div>
-            <input style={{ marginLeft: 40 }} value={weight} 
+            <input
+              style={{ marginLeft: 40 }}
+              value={weight}
               onChange={(e) =>
-                (weights.referencesSeedPapers.components[i].weight = +e.target
-                  .value)
+                setWeights({
+                  ...weights,
+                  referencesSeedPapers: {
+                    ...weights.referencesSeedPapers,
+                    components: weights.referencesSeedPapers.components.map(
+                      (x, _i) =>
+                        i !== _i
+                          ? x
+                          : {
+                              ...x,
+                              weight: +e.target.value,
+                            }
+                    ),
+                  },
+                })
               }
             />
           </>
         ))}
       </Grid>
       <Box fill={true} justify="center" margin={{ top: "small" }}>
-        <Button primary color="dark-2" label="Apply" onClick={() => {
-          dispatch(actionOverview.setWeights(weights))
-        }} />
+        <Button
+          primary
+          color="dark-2"
+          label="Apply"
+          onClick={() => {
+            dispatch(actionOverview.setWeights(weights));
+            onClose();
+          }}
+        />
       </Box>
     </Box>
   );

@@ -209,7 +209,7 @@ const HistoryLink: React.FC<Props> = ({
                 className={'history-header'}
                 style={{ width: svgWidth, height: offsetHeight }}
             >
-                <button onClick={selectHistory}> Select </button>
+                <button onClick={selectHistory}>Restore</button>
             </div>
             <svg height={svgHeight} width={svgWidth}>
                 <g
