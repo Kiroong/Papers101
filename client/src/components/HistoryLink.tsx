@@ -148,6 +148,7 @@ const HistoryLink: React.FC<Props> = ({
             .attr('y2', (d: HistoryLine) => (d.toIndex+0.5) * cellHeight)
             .attr('stroke', d => markedEntries.map(me => me.doi).includes(d.toDoi)? 'red': 'black')
             .attr('stroke-width', cellHeight * 0.8)
+            .attr('stroke-linecap', 'round')
             .attr('opacity', 0.3)
             .on('click', (e, d) => handleClick(e, d))
             //.on('mouseover', (e, d) => handleLinkMouseover(e, d))
