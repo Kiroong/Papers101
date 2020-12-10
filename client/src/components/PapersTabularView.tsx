@@ -88,10 +88,10 @@ const PapersTabularView: React.FC = () => {
             .map((_, i) => (
               <HistoryLink
                 fromEntries={
-                  histories.slice(-(numHistories - 1 - i + 2))[0].paperEntries.slice(0, 100)
+                  histories.slice(-(numHistories - 1 - i + 2))[0].paperEntries.filter((entry) => !seedPapers.map((e) => e.doi).includes(entry.doi)).slice(0, 100)
                 }
                 toEntries={
-                  histories.slice(-(numHistories - 1 - i + 1))[0].paperEntries.slice(0, 100)
+                  histories.slice(-(numHistories - 1 - i + 1))[0].paperEntries.filter((entry) => !seedPapers.map((e) => e.doi).includes(entry.doi)).slice(0, 100)
                 }
                 markedEntries={markedPapers}
                 setMarkedEntries={setMarkedPapers}
