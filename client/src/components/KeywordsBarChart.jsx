@@ -9,29 +9,34 @@ const KeywordsBarChart = ({
 }) => {
   const maxCount = wordCounts.reduce((a, b) => Math.max(a, b.count), 0);
   console.log({ maxCount });
+  let defaultColor = "rgba(128, 128, 128, 0.3)"
+  let barHeight = 25
+  let padding = 5
+  let textMargin = 15
   return (
-    <svg width={svgWidth} height={wordCounts.length * 35}>
-      {wordCounts.map(({ word, count, isSelected }, i) => (
+    <svg width={svgWidth} height={wordCounts.length * barHeight}>
+      {wordCounts.map(({ word, count, isSelected }, i) => {
+        return (
         <>
           <rect
             x={svgWidth / 2}
-            y={i * 35}
+            y={i * barHeight}
             onClick={() => onClick(word)}
             width={(count / maxCount) * svgWidth * 0.4}
-            height={30}
+            height={barHeight - padding}
             fill={
               isSelected
                 ? d3.schemeTableau10[
                     Math.min(9, userInputKeywords.indexOf(word))
                   ]
-                : "rgba(255, 0, 255, 0.2)"
+                : defaultColor
             }
           />
-          <text x={0} y={i * 35 + 15}>
+          <text x={0} y={i * barHeight + textMargin}>
             {word}
           </text>
         </>
-      ))}
+      )})}
     </svg>
   );
 };
