@@ -7,7 +7,14 @@ export interface PaperEntry {
   referencing: string[];
   title: string;
   year: number;
+  // ============= //
+  numReferenced: number;
+  numReferencing: number;
+  // ============= //
+  score: number;
+  [additionalColumn: string]: any;
 }
+
 
 export interface OverviewState {
   paperEntries: PaperEntry[] | null;

@@ -15,7 +15,7 @@ const Overview: React.FC = () => {
   }
   console.log({ data: paperEntries })
   return (
-    <Grid fill={true} columns={["small", "1fr", "small"]} rows={["large"]}>
+    <Grid fill={true} columns={["2fr", "10fr", "2fr"]}>
       <Box fill={true}>
         <SearchBox />
       </Box>

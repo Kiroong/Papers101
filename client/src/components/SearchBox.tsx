@@ -11,12 +11,15 @@ import {
 } from "grommet";
 import * as Icons from "grommet-icons";
 import React, { useState } from "react";
+import { actionOverview } from "../redux/action/overview-actions";
+import { useThunkDispatch } from "../redux/action/root-action";
 import { useRootSelector } from "../redux/state/root-state";
 
 const SearchBox: React.FC = () => {
   const [currentKeyword, setCurrentKeyword] = useState("");
-  const keywords = useRootSelector(state => state.overview.keywords)
-  const seedPapers = useRootSelector(state => state.overview.seedPapers)
+  const keywords = useRootSelector((state) => state.overview.keywords);
+  const seedPapers = useRootSelector((state) => state.overview.seedPapers);
+  const dispatch = useThunkDispatch();
 
   return (
     <Card height="100%" width="100%" background="white">
@@ -25,7 +28,12 @@ const SearchBox: React.FC = () => {
       </CardHeader>
       <CardBody pad="small" gap="small">
         <Heading level="5">Keywords</Heading>
-        <Form onSubmit={() => {}}>
+        <Form
+          onSubmit={() => {
+            dispatch(actionOverview.setKeywords([...keywords, currentKeyword]));
+            setCurrentKeyword("");
+          }}
+        >
           <TextInput
             value={currentKeyword}
             onChange={(e) => setCurrentKeyword(e.target.value)}
@@ -47,20 +55,22 @@ const SearchBox: React.FC = () => {
         </Form>
         <Heading level="5">Seed papers</Heading>
         <Form onSubmit={() => {}}>
-          <TextInput
-            value={currentKeyword}
-            onChange={(e) => setCurrentKeyword(e.target.value)}
-          />
           <List
-            data={seedPapers.map((entry) => ({ entry: entry.title }))}
-            primaryKey={(item) => item.entry}
+            data={seedPapers.map((entry) => entry)}
+            primaryKey={(entry) => entry.title}
             pad={{ left: "small", right: "none", top: "none", bottom: "none" }}
-            action={(item, index) => {
+            action={(entry, index) => {
               return (
                 <Button
                   icon={<Icons.Close size="small" />}
                   hoverIndicator
-                  onClick={() => {}}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setSeedPapers(
+                        seedPapers.filter((e) => e !== entry)
+                      )
+                    );
+                  }}
                 />
               );
             }}

@@ -20,9 +20,13 @@ import HistoryLink from "./HistoryLink";
 
 const PapersTabularView: React.FC = () => {
   const numHistories = 2;
-  const paperEntries = useRootSelector((state) => state.overview.paperEntries);
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
+  const paperEntries = useRootSelector((state) =>
+    state.overview.paperEntries
+      ?.filter((entry) => !seedPapers.includes(entry))
+      .slice(0, 100)
+  );
   const dispatch = useThunkDispatch();
 
   return (
@@ -84,11 +88,13 @@ const PapersTabularView: React.FC = () => {
                 <th scope="col">Keyword Similarity</th>
                 <th scope="col">Seed Paper Similarity</th>
                 <th scope="col"># References</th>
+                <th scope="col"># Referenced</th>
+                <th scope="col">score</th>
               </tr>
             </thead>
             <tbody>
               {paperEntries &&
-                paperEntries.slice(0, 100).map((entry) => (
+                paperEntries.map((entry, i) => (
                   <tr
                     onClick={() => {
                       dispatch(
@@ -124,7 +130,9 @@ const PapersTabularView: React.FC = () => {
                         <Box height="10px" width="70px" background="yellow" />
                       </Box>
                     </td>
-                    <td>{entry.referencing.length}</td>
+                    <td>{entry.numReferencing}</td>
+                    <td>{entry.numReferenced}</td>
+                    <td>{entry.score}</td>
                   </tr>
                 ))}
             </tbody>

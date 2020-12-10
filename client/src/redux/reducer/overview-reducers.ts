@@ -17,7 +17,13 @@ export const overviewReducer = (
     case getType(actionOverview.getData.complete):
       return {
         ...state,
-        paperEntries: action.payload,
+        paperEntries: action.payload.map(entry => ({
+          ...entry,
+          referencedBy: entry.referenced_by,
+          numReferencing: entry.referencing.length,
+          numReferenced: entry.referenced_by.length,
+          score: entry.year
+        })),
       };
     case getType(actionOverview.setKeywords):
       return {
