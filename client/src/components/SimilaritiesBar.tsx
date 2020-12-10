@@ -21,7 +21,8 @@ const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum }) => {
     <Box justify="center" fill={true} direction="row" ref={container}>
       {width && height && similarities.map((sim, i) => (
         <Box
-          height={`${height}px`}
+          margin={{ top: `${height * 0.25}px`}}
+          height={`${height * 0.5}px`}
           width={`${sim / maxOfSum * width}px`}
           background={d3.schemeTableau10[Math.min(9, i)]}
         />

@@ -105,27 +105,39 @@ const PapersTabularView: React.FC = () => {
                 );
               }
             })}
-          <table>
-            <thead>
-              <tr style={{ height: 40, padding: 0 }}>
-                <th scope="col"></th>
-                <th scope="col">Title</th>
-                <th scope="col">Year</th>
-                <th scope="col"># References</th>
-                <th scope="col"># Referenced</th>
-                <th scope="col">Keyword Similarity</th>
-                <th scope="col">Seed Paper Similarity</th>
-                <th scope="col">Referenced by Seed Papers</th>
-                <th scope="col">References Seed Papers</th>
-                <th scope="col">score</th>
-              </tr>
-            </thead>
-            <tbody>
+          <div>
+            <Grid
+              rows={["40px", ...paperEntries.map((_) => "20px")]}
+              columns={[
+                "auto",
+                "4fr",
+                "1fr",
+                "1fr",
+                "1fr",
+                "1fr",
+                "1fr",
+                "1fr",
+                "1fr",
+                "1fr",
+              ]}
+            >
+              <div></div>
+              <div>Title</div>
+              <div>Year</div>
+              <div># References</div>
+              <div># Referenced</div>
+              <div>Keyword Similarity</div>
+              <div>Seed Paper Similarity</div>
+              <div>Referenced by Seed Papers</div>
+              <div>References Seed Papers</div>
+              <div>score</div>
               {paperEntries &&
                 paperEntries.map((entry, i) => (
-                  <tr key={entry.doi} style={{ height: 20, padding: 0 }}>
-                    <td>
-                      <CheckBox
+                  <>
+                    <div>
+                      <input
+                        type="checkbox"
+                        style={{ height: 12 }}
                         checked={markedPapers.includes(entry)}
                         onChange={() => {
                           if (markedPapers.includes(entry)) {
@@ -144,8 +156,8 @@ const PapersTabularView: React.FC = () => {
                           }
                         }}
                       />
-                    </td>
-                    <td
+                    </div>
+                    <div
                       onClick={() => {
                         if (!seedPapers.includes(entry)) {
                           dispatch(
@@ -153,41 +165,51 @@ const PapersTabularView: React.FC = () => {
                           );
                         }
                       }}
+                      style={{
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                      }}
                     >
-                      <strong>{entry.title.slice(0, 50)}</strong>
-                    </td>
-                    <td>{entry.year}</td>
-                    <td>{entry.numReferencing}</td>
-                    <td>{entry.numReferenced}</td>
-                    <td>
+                      <strong
+                        style={{
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {entry.title}
+                      </strong>
+                    </div>
+                    <div>{entry.year}</div>
+                    <div>{entry.numReferencing}</div>
+                    <div>{entry.numReferenced}</div>
+                    <div>
                       <SimilaritiesBar
                         similarities={entry.keywordSims}
                         maxOfSum={keywordSimsMaxOfSum}
                       />
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                       <SimilaritiesBar
                         similarities={entry.seedPaperSims}
                         maxOfSum={seedPaperSimsMaxOfSum}
                       />
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                       <SimilaritiesBar
                         similarities={entry.referencedBySeedPapers}
                         maxOfSum={referencedBySeedPapersMaxOfSum}
                       />
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                       <SimilaritiesBar
                         similarities={entry.referencesSeedPapers}
                         maxOfSum={referencesSeedPapersMaxOfSum}
                       />
-                    </td>
-                    <td>{entry.score}</td>
-                  </tr>
+                    </div>
+                    <div>{entry.score}</div>
+                  </>
                 ))}
-            </tbody>
-          </table>
+            </Grid>
+          </div>
         </Grid>
       </CardBody>
     </Card>
