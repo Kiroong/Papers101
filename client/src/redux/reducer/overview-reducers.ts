@@ -11,6 +11,7 @@ const defaultOverviewState: OverviewState = {
   seedPapers: [],
   markedPapers: [],
   histories: [],
+  seedPaperSimsCache: {},
 };
 
 function scoreOfEntry(entry: PaperEntry) {
@@ -23,12 +24,14 @@ function scoreOfEntry(entry: PaperEntry) {
   return score;
 }
 
+
 function updateSortedPaperEntries(
   state: OverviewState,
   updateKeywordSims: boolean,
   updateSeedPaperSims: boolean
 ) {
   const updated = state.paperEntries.map((entry) => {
+    const seedPaperSimsCache = state.seedPaperSimsCache; // going to mutate it as it's cache
     let newEntry = { ...entry };
     if (updateKeywordSims) {
       const keywordSims = state.keywords.map(
@@ -41,16 +44,25 @@ function updateSortedPaperEntries(
     }
     if (updateSeedPaperSims) {
       const seedPaperSims = state.seedPapers.map((seed) => {
-        const a = new Set(extractKeywords(entry.title + " " + entry.abstract));
-        const b = new Set(extractKeywords(seed.title + " " + seed.abstract));
-        const [union, intersection] = [
-          new Set<string>([]),
-          new Set<string>([]),
-        ];
-        a.forEach((w) => union.add(w));
-        b.forEach((w) => union.add(w));
-        a.forEach((w) => b.has(w) && intersection.add(w));
-        return intersection.size / union.size;
+        if (!(seed.doi in seedPaperSimsCache)) {
+          seedPaperSimsCache[seed.doi] = {};
+        }
+        if (!seedPaperSimsCache[seed.doi][entry.doi]) {
+          const a = new Set(
+            extractKeywords(entry.title + " " + entry.abstract)
+          );
+          const b = new Set(extractKeywords(seed.title + " " + seed.abstract));
+          const [union, intersection] = [
+            new Set<string>([]),
+            new Set<string>([]),
+          ];
+          a.forEach((w) => union.add(w));
+          b.forEach((w) => union.add(w));
+          a.forEach((w) => b.has(w) && intersection.add(w));
+          seedPaperSimsCache[seed.doi][entry.doi] =
+            intersection.size / union.size;
+        }
+        return seedPaperSimsCache[seed.doi][entry.doi];
       });
       const referencedBySeedPapers = state.seedPapers.map((seed) => {
         return newEntry.referencedBy.includes(seed.doi) ? 1 : 0;
@@ -129,6 +141,12 @@ export const overviewReducer = (
       return {
         ...state,
         markedPapers,
+      };
+    case getType(actionOverview.setHistories):
+      const histories = action.payload;
+      return {
+        ...state,
+        histories,
       };
     default:
       return state;

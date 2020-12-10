@@ -19,11 +19,11 @@ export interface PaperEntry {
   [additionalColumn: string]: any;
 }
 
-
 export interface OverviewState {
   paperEntries: PaperEntry[];
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
   keywords: string[];
   histories: OverviewState[];
+  seedPaperSimsCache: { [doi: string]: { [doi: string]: number } };
 }

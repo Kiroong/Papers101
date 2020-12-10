@@ -1,12 +1,4 @@
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  CheckBox,
-  Grid,
-  Heading,
-} from "grommet";
+import { Card, CardBody, CardHeader, Grid, Heading } from "grommet";
 import React from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
@@ -63,8 +55,12 @@ const PapersTabularView: React.FC = () => {
             .fill(0)
             .map((_, i) => (
               <HistoryLink
-                fromEntries={histories.slice(-(i + 1))[0].paperEntries}
-                toEntries={histories.slice(-(i + 2))[0].paperEntries}
+                fromEntries={
+                  histories.slice(-(numHistories - 1 - i + 1))[0].paperEntries
+                }
+                toEntries={
+                  histories.slice(-(numHistories - 1 - i + 2))[0].paperEntries
+                }
                 markedEntries={markedPapers}
                 onSelect={() => {}}
                 offsetHeight={40}
