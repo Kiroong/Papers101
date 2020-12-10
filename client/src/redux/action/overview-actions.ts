@@ -5,20 +5,24 @@ import { makeThunk } from "./utils";
 
 const unitActions = {
   setKeywords: createAction(
-    'OVERVIEW/SET_KEYWORDS',
+    "OVERVIEW/SET_KEYWORDS",
     (keywords: string[]) => keywords
   )(),
   setSeedPapers: createAction(
-    'OVERVIEW/SET_SEED_PAPERS',
+    "OVERVIEW/SET_SEED_PAPERS",
     (seedPapers: PaperEntry[]) => seedPapers
   )(),
   setMarkedPapers: createAction(
-    'OVERVIEW/SET_MARKED_PAPERS',
+    "OVERVIEW/SET_MARKED_PAPERS",
     (markedPapers: PaperEntry[]) => markedPapers
   )(),
   setHistories: createAction(
-    'OVERVIEW/SET_HISTORIES',
+    "OVERVIEW/SET_HISTORIES",
     (histories: OverviewState[]) => histories
+  )(),
+  selectHistory: createAction(
+    "OVERVIEW/SELECT_HISTORY",
+    (history: OverviewState) => history
   )(),
 };
 

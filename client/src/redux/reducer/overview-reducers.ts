@@ -199,6 +199,9 @@ export const overviewReducer = (
         ...state,
         histories,
       };
+    case getType(actionOverview.selectHistory):
+      const history = action.payload;
+      return history;
     default:
       return state;
   }

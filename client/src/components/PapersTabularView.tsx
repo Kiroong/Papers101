@@ -85,13 +85,19 @@ const PapersTabularView: React.FC = () => {
             .map((_, i) => (
               <HistoryLink
                 fromEntries={
-                  histories.slice(-(numHistories - 1 - i + 1))[0].paperEntries
-                }
-                toEntries={
                   histories.slice(-(numHistories - 1 - i + 2))[0].paperEntries
                 }
+                toEntries={
+                  histories.slice(-(numHistories - 1 - i + 1))[0].paperEntries
+                }
                 markedEntries={markedPapers}
-                onSelect={() => {}}
+                onSelect={() => {
+                  dispatch(
+                    actionOverview.selectHistory(
+                      histories.slice(-(numHistories - 1 - i + 2))[0]
+                    )
+                  );
+                }}
                 offsetHeight={40}
                 cellHeight={20}
               />
