@@ -16,7 +16,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
     seedPapers.forEach((entry) => {
       entry.abstract
         .split(" ")
-        .map(word => word.toLowerCase())
+        .map((word) => word.toLowerCase().replace(/[^a-zA-Z\-]/g, ""))
         .forEach((word) =>
           count[word] ? (count[word] += 1) : (count[word] = 1)
         );

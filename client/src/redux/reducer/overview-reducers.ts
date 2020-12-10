@@ -14,7 +14,10 @@ const defaultOverviewState: OverviewState = {
 function scoreOfEntry(entry: PaperEntry) {
   const keywordSim = d3.sum(entry.keywordSims);
   const seedPaperSim = d3.sum(entry.seedPaperSims);
-  const score = keywordSim + seedPaperSim;
+  const referencesSeedPapers = d3.sum(entry.referencesSeedPapers);
+  const referencedBySeedPapers = d3.sum(entry.referencedBySeedPapers);
+  // const score = keywordSim + seedPaperSim + referencedBySeedPapers + referencesSeedPapers;
+  const score = keywordSim + referencedBySeedPapers + referencesSeedPapers;
   return score;
 }
 
@@ -40,15 +43,18 @@ function updateSortedPaperEntries(
         const b = (seed.title + seed.abstract).toLowerCase().split(" ");
         return a.filter((x) => b.includes(x)).length;
       });
-      newEntry = { ...newEntry, seedPaperSims };
+      const referencedBySeedPapers = state.seedPapers.map((seed) => {
+        return newEntry.referencedBy.includes(seed.doi) ? 1 : 0
+      })
+      const referencesSeedPapers = state.seedPapers.map((seed) => {
+        return newEntry.referencing.includes(seed.doi) ? 1 : 0
+      })
+      newEntry = { ...newEntry, seedPaperSims, referencedBySeedPapers, referencesSeedPapers };
     }
     newEntry = { ...newEntry, score: scoreOfEntry(newEntry) };
     return newEntry;
   });
-  const filtered = updated.filter(
-    (entry) => !state.seedPapers.map((e) => e.doi).includes(entry.doi)
-  );
-  const sorted = filtered.sort((a, b) => a.score === b.score ? b.year - a.year : b.score - a.score);
+  const sorted = updated.sort((a, b) => a.score === b.score ? b.year - a.year : b.score - a.score);
   return sorted;
 }
 
@@ -65,6 +71,8 @@ export const overviewReducer = (
         numReferenced: entry.referenced_by.length,
         keywordSims: [],
         seedPaperSims: [],
+        referencedBySeedPapers: [],
+        referencesSeedPapers: [],
         score: 0,
       }));
       const nextState = {

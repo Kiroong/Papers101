@@ -14,33 +14,40 @@ import { useRootSelector } from "../redux/state/root-state";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
 
+function maxOfSum(values: number[][]) {
+  return values.reduce(
+    (a, b) =>
+      Math.max(
+        a,
+        b.reduce((x, y) => x + y, 0)
+      ),
+    0
+  );
+}
+
 const PapersTabularView: React.FC = () => {
   const numHistories = 2;
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
-  const paperEntries = useRootSelector(
-    (state) => state.overview.paperEntries.slice(0, 100)
+  const paperEntries = useRootSelector((state) =>
+    state.overview.paperEntries
+      .filter((entry) => !seedPapers.map((e) => e.doi).includes(entry.doi))
+      .slice(0, 100)
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
 
-  const keywordSimsMaxOfSum =
-    paperEntries?.reduce(
-      (a, b) =>
-        Math.max(
-          a,
-          b.keywordSims.reduce((x, y) => x + y, 0)
-        ),
-      0
-    ) || 0;
-  const seedPaperSimsMaxOfSum =
-    paperEntries?.reduce(
-      (a, b) =>
-        Math.max(
-          a,
-          b.seedPaperSims.reduce((x, y) => x + y, 0)
-        ),
-      0
-    ) || 0;
+  const keywordSimsMaxOfSum = maxOfSum(
+    paperEntries.map((entry) => entry.keywordSims)
+  );
+  const seedPaperSimsMaxOfSum = maxOfSum(
+    paperEntries.map((entry) => entry.seedPaperSims)
+  );
+  const referencedBySeedPapersMaxOfSum = maxOfSum(
+    paperEntries.map((entry) => entry.referencedBySeedPapers)
+  );
+  const referencesSeedPapersMaxOfSum = maxOfSum(
+    paperEntries.map((entry) => entry.referencesSeedPapers)
+  );
   const dispatch = useThunkDispatch();
 
   return (
@@ -104,10 +111,12 @@ const PapersTabularView: React.FC = () => {
                 <th scope="col"></th>
                 <th scope="col">Title</th>
                 <th scope="col">Year</th>
-                <th scope="col">Keyword Similarity</th>
-                <th scope="col">Seed Paper Similarity</th>
                 <th scope="col"># References</th>
                 <th scope="col"># Referenced</th>
+                <th scope="col">Keyword Similarity</th>
+                <th scope="col">Seed Paper Similarity</th>
+                <th scope="col">Referenced by Seed Papers</th>
+                <th scope="col">References Seed Papers</th>
                 <th scope="col">score</th>
               </tr>
             </thead>
@@ -148,6 +157,8 @@ const PapersTabularView: React.FC = () => {
                       <strong>{entry.title.slice(0, 50)}</strong>
                     </td>
                     <td>{entry.year}</td>
+                    <td>{entry.numReferencing}</td>
+                    <td>{entry.numReferenced}</td>
                     <td>
                       <SimilaritiesBar
                         similarities={entry.keywordSims}
@@ -160,8 +171,18 @@ const PapersTabularView: React.FC = () => {
                         maxOfSum={seedPaperSimsMaxOfSum}
                       />
                     </td>
-                    <td>{entry.numReferencing}</td>
-                    <td>{entry.numReferenced}</td>
+                    <td>
+                      <SimilaritiesBar
+                        similarities={entry.referencedBySeedPapers}
+                        maxOfSum={referencedBySeedPapersMaxOfSum}
+                      />
+                    </td>
+                    <td>
+                      <SimilaritiesBar
+                        similarities={entry.referencesSeedPapers}
+                        maxOfSum={referencesSeedPapersMaxOfSum}
+                      />
+                    </td>
                     <td>{entry.score}</td>
                   </tr>
                 ))}
