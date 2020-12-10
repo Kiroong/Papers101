@@ -25,4 +25,5 @@ export interface OverviewState {
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
   keywords: string[];
+  histories: OverviewState[];
 }

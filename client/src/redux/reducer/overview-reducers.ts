@@ -10,6 +10,7 @@ const defaultOverviewState: OverviewState = {
   keywords: [],
   seedPapers: [],
   markedPapers: [],
+  histories: [],
 };
 
 function scoreOfEntry(entry: PaperEntry) {
@@ -40,25 +41,36 @@ function updateSortedPaperEntries(
     }
     if (updateSeedPaperSims) {
       const seedPaperSims = state.seedPapers.map((seed) => {
-        const a = new Set(extractKeywords(entry.title + " " + entry.abstract))
-        const b = new Set(extractKeywords(seed.title + " " + seed.abstract))
-        const [union, intersection] = [new Set<string>([]), new Set<string>([])]
-        a.forEach(w => union.add(w)); b.forEach(w => union.add(w));
-        a.forEach(w => b.has(w) && intersection.add(w));
+        const a = new Set(extractKeywords(entry.title + " " + entry.abstract));
+        const b = new Set(extractKeywords(seed.title + " " + seed.abstract));
+        const [union, intersection] = [
+          new Set<string>([]),
+          new Set<string>([]),
+        ];
+        a.forEach((w) => union.add(w));
+        b.forEach((w) => union.add(w));
+        a.forEach((w) => b.has(w) && intersection.add(w));
         return intersection.size / union.size;
       });
       const referencedBySeedPapers = state.seedPapers.map((seed) => {
-        return newEntry.referencedBy.includes(seed.doi) ? 1 : 0
-      })
+        return newEntry.referencedBy.includes(seed.doi) ? 1 : 0;
+      });
       const referencesSeedPapers = state.seedPapers.map((seed) => {
-        return newEntry.referencing.includes(seed.doi) ? 1 : 0
-      })
-      newEntry = { ...newEntry, seedPaperSims, referencedBySeedPapers, referencesSeedPapers };
+        return newEntry.referencing.includes(seed.doi) ? 1 : 0;
+      });
+      newEntry = {
+        ...newEntry,
+        seedPaperSims,
+        referencedBySeedPapers,
+        referencesSeedPapers,
+      };
     }
     newEntry = { ...newEntry, score: scoreOfEntry(newEntry) };
     return newEntry;
   });
-  const sorted = updated.sort((a, b) => a.score === b.score ? b.year - a.year : b.score - a.score);
+  const sorted = updated.sort((a, b) =>
+    a.score === b.score ? b.year - a.year : b.score - a.score
+  );
   return sorted;
 }
 
@@ -93,6 +105,7 @@ export const overviewReducer = (
       const nextState = {
         ...state,
         keywords,
+        histories: [...state.histories, state],
       };
       return {
         ...nextState,
@@ -104,6 +117,7 @@ export const overviewReducer = (
       const nextState = {
         ...state,
         seedPapers,
+        histories: [...state.histories, state],
       };
       return {
         ...nextState,

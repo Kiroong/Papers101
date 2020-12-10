@@ -16,7 +16,11 @@ import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
 
 const PapersTabularView: React.FC = () => {
-  const numHistories = 2;
+  const histories = useRootSelector((state) => [
+    ...state.overview.histories,
+    state.overview,
+  ]);
+  const numHistories = Math.min(2, histories.length - 1);
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
   const paperEntries = useRootSelector((state) =>
@@ -57,44 +61,16 @@ const PapersTabularView: React.FC = () => {
         >
           {Array(numHistories)
             .fill(0)
-            .map((_, i) => {
-              if (!paperEntries) {
-                return null;
-              }
-              if (i === 0) {
-                const reversed = paperEntries.slice(0).reverse();
-                return (
-                  <HistoryLink
-                    fromEntries={[
-                      ...paperEntries.slice(10, 100),
-                      ...paperEntries.slice(0, 10).reverse(),
-                    ]}
-                    toEntries={[
-                      ...paperEntries.slice(5, 100),
-                      ...paperEntries.slice(0, 5).reverse(),
-                    ]}
-                    markedEntries={markedPapers}
-                    onSelect={() => {}}
-                    offsetHeight={40}
-                    cellHeight={20}
-                  />
-                );
-              } else if (i === 1) {
-                return (
-                  <HistoryLink
-                    fromEntries={[
-                      ...paperEntries.slice(5, 100),
-                      ...paperEntries.slice(0, 5).reverse(),
-                    ]}
-                    toEntries={paperEntries}
-                    markedEntries={markedPapers}
-                    onSelect={() => {}}
-                    offsetHeight={40}
-                    cellHeight={20}
-                  />
-                );
-              }
-            })}
+            .map((_, i) => (
+              <HistoryLink
+                fromEntries={histories.slice(-(i + 1))[0].paperEntries}
+                toEntries={histories.slice(-(i + 2))[0].paperEntries}
+                markedEntries={markedPapers}
+                onSelect={() => {}}
+                offsetHeight={40}
+                cellHeight={20}
+              />
+            ))}
           <div>
             <Grid
               rows={["40px", ...paperEntries.map((_) => "20px")]}
