@@ -5,30 +5,52 @@ import { ReducibleAction } from "../action/root-action";
 import { OverviewState, PaperEntry } from "../state/overview";
 
 const defaultOverviewState: OverviewState = {
-  paperEntries: null,
+  paperEntries: [],
   keywords: [],
   seedPapers: [],
   markedPapers: [],
 };
 
-function sortPaperEntries(paperEntries: PaperEntry[]) {
-  return paperEntries.sort((a, b) => {
-    if (a.score !== b.score) {
-      return b.score - a.score;
-    } else {
-      return b.year - a.year;
-    }
-  });
-}
-
-function modifyScoreFromEntry(entry: PaperEntry) {
+function scoreOfEntry(entry: PaperEntry) {
   const keywordSim = d3.sum(entry.keywordSims);
   const seedPaperSim = d3.sum(entry.seedPaperSims);
   const score = keywordSim + seedPaperSim;
-  return {
-    ...entry,
-    score,
-  };
+  return score;
+}
+
+function updateSortedPaperEntries(
+  state: OverviewState,
+  updateKeywordSims: boolean,
+  updateSeedPaperSims: boolean
+) {
+  const updated = state.paperEntries.map((entry) => {
+    let newEntry = { ...entry };
+    if (updateKeywordSims) {
+      const keywordSims = state.keywords.map(
+        (keyword) =>
+          (entry.title + entry.abstract)
+            .toLowerCase()
+            .split(keyword.toLowerCase()).length - 1
+      );
+      newEntry = { ...newEntry, keywordSims };
+    }
+    if (updateSeedPaperSims) {
+      const seedPaperSims = state.seedPapers.map((seed) => {
+        const a = (entry.title + entry.abstract).toLowerCase().split(" ");
+        const b = (seed.title + seed.abstract).toLowerCase().split(" ");
+        return a.filter((x) => b.includes(x)).length;
+      });
+      newEntry = { ...newEntry, seedPaperSims };
+    }
+    newEntry = { ...newEntry, score: scoreOfEntry(newEntry) };
+    return newEntry;
+  });
+  const filtered = updated.filter(
+    (entry) => !state.seedPapers.map((e) => e.doi).includes(entry.doi)
+  );
+  const sorted = filtered.sort((a, b) => b.score - a.score);
+  const truncated = sorted.slice(0, 50);
+  return truncated;
 }
 
 export const overviewReducer = (
@@ -37,67 +59,46 @@ export const overviewReducer = (
 ): OverviewState => {
   switch (action.type) {
     case getType(actionOverview.getData.complete):
-      return {
+      const paperEntries = action.payload.map((entry) => ({
+        ...entry,
+        referencedBy: entry.referenced_by,
+        numReferencing: entry.referencing.length,
+        numReferenced: entry.referenced_by.length,
+        keywordSims: [],
+        seedPaperSims: [],
+        score: 0,
+      }));
+      const nextState = {
         ...state,
-        paperEntries: sortPaperEntries(
-          action.payload
-            .map((entry) => ({
-              ...entry,
-              referencedBy: entry.referenced_by,
-              numReferencing: entry.referencing.length,
-              numReferenced: entry.referenced_by.length,
-              keywordSims: [],
-              seedPaperSims: [],
-              score: 0,
-            }))
-            .filter((entry) => !state.seedPapers.includes(entry))
-        ),
+        paperEntries,
       };
-    case getType(actionOverview.setKeywords):
-      const keywords = action.payload;
       return {
+        ...nextState,
+        paperEntries: updateSortedPaperEntries(nextState, false, false),
+      };
+    case getType(actionOverview.setKeywords): {
+      const keywords = action.payload;
+
+      const nextState = {
         ...state,
         keywords,
-        paperEntries: sortPaperEntries(
-          state.paperEntries
-            ?.map((entry) => {
-              const keywordSims = keywords.map(
-                (keyword) =>
-                  (entry.title + entry.abstract)
-                    .toLowerCase()
-                    .split(keyword.toLowerCase()).length - 1
-              );
-              return modifyScoreFromEntry({
-                ...entry,
-                keywordSims,
-              });
-            })
-            .filter((entry) => !state.seedPapers.includes(entry)) || []
-        ),
       };
-    case getType(actionOverview.setSeedPapers):
-      const seedPapers = action.payload;
       return {
+        ...nextState,
+        paperEntries: updateSortedPaperEntries(nextState, true, false),
+      };
+    }
+    case getType(actionOverview.setSeedPapers): {
+      const seedPapers = action.payload;
+      const nextState = {
         ...state,
         seedPapers,
-        paperEntries: sortPaperEntries(
-          state.paperEntries
-            ?.map((entry) => {
-              const seedPaperSims = seedPapers.map((seed) => {
-                const a = (entry.title + entry.abstract)
-                  .toLowerCase()
-                  .split(" ");
-                const b = (seed.title + seed.abstract).toLowerCase().split(" ");
-                return a.filter((x) => b.includes(x)).length;
-              });
-              return modifyScoreFromEntry({
-                ...entry,
-                seedPaperSims,
-              });
-            })
-            .filter((entry) => !seedPapers.includes(entry)) || []
-        ),
       };
+      return {
+        ...nextState,
+        paperEntries: updateSortedPaperEntries(nextState, false, true),
+      };
+    }
     case getType(actionOverview.setMarkedPapers):
       const markedPapers = action.payload;
       return {
