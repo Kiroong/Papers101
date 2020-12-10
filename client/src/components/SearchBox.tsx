@@ -1,4 +1,6 @@
+import * as d3 from "d3";
 import {
+  Box,
   Button,
   Card,
   CardBody,
@@ -7,6 +9,7 @@ import {
   Form,
   Heading,
   List,
+  Text,
   TextInput,
 } from "grommet";
 import * as Icons from "grommet-icons";
@@ -42,8 +45,22 @@ const SearchBox: React.FC = () => {
             data={keywords.map((keyword) => ({ entry: keyword }))}
             primaryKey={(item) => item.entry}
             pad={{ left: "small", right: "none", top: "none", bottom: "none" }}
-            action={(item, index) => {
-              return (
+          >
+            {(item: any, i: number) => (
+              <Box
+                key={item.doi}
+                direction="row-responsive"
+                gap="medium"
+                align="center"
+              >
+                <div
+                  style={{
+                    width: 20,
+                    height: 20,
+                    backgroundColor: d3.schemeTableau10[Math.min(i, 9)],
+                  }}
+                />
+                <Text size="small">{item.entry}</Text>
                 <Button
                   icon={<Icons.Close size="small" />}
                   hoverIndicator
@@ -55,9 +72,9 @@ const SearchBox: React.FC = () => {
                     );
                   }}
                 />
-              );
-            }}
-          />
+              </Box>
+            )}
+          </List>
         </Form>
         <Heading level="5">Seed papers</Heading>
         <Form onSubmit={() => {}}>
@@ -65,22 +82,37 @@ const SearchBox: React.FC = () => {
             data={seedPapers.map((entry) => entry)}
             primaryKey={(entry) => entry.title}
             pad={{ left: "small", right: "none", top: "none", bottom: "none" }}
-            action={(entry, index) => {
-              return (
+          >
+            {(item: any, i: number) => (
+              <Box
+                key={item.doi}
+                direction="row-responsive"
+                gap="medium"
+                align="center"
+              >
+                <div
+                  style={{
+                    width: 20,
+                    minWidth: 20,
+                    height: 20,
+                    backgroundColor: d3.schemeTableau10[Math.min(i, 9)],
+                  }}
+                />
+                <Text size="small">{item.title}</Text>
                 <Button
                   icon={<Icons.Close size="small" />}
                   hoverIndicator
                   onClick={() => {
                     dispatch(
                       actionOverview.setSeedPapers(
-                        seedPapers.filter((e) => e !== entry)
+                        seedPapers.filter((e) => e !== item)
                       )
                     );
                   }}
                 />
-              );
-            }}
-          />
+              </Box>
+            )}
+          </List>
         </Form>
       </CardBody>
       <CardFooter
