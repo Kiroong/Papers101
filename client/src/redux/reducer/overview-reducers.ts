@@ -48,9 +48,8 @@ function updateSortedPaperEntries(
   const filtered = updated.filter(
     (entry) => !state.seedPapers.map((e) => e.doi).includes(entry.doi)
   );
-  const sorted = filtered.sort((a, b) => b.score - a.score);
-  const truncated = sorted.slice(0, 50);
-  return truncated;
+  const sorted = filtered.sort((a, b) => a.score === b.score ? b.year - a.year : b.score - a.score);
+  return sorted;
 }
 
 export const overviewReducer = (
