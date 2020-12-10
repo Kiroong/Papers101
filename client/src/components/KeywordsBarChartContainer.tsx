@@ -58,6 +58,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
       {width && (
         <KeywordsBarChart
           svgWidth={width * 0.9}
+          userInputKeywords={userInputKeywords}
           wordCounts={wordCounts}
           onClick={(keyword: string) => {
             if (userInputKeywords.includes(keyword)) {
