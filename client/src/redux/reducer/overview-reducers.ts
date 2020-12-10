@@ -8,6 +8,7 @@ const defaultOverviewState: OverviewState = {
   paperEntries: null,
   keywords: [],
   seedPapers: [],
+  markedPapers: [],
 };
 
 function sortPaperEntries(paperEntries: PaperEntry[]) {
@@ -96,6 +97,12 @@ export const overviewReducer = (
             })
             .filter((entry) => !seedPapers.includes(entry)) || []
         ),
+      };
+    case getType(actionOverview.setMarkedPapers):
+      const markedPapers = action.payload;
+      return {
+        ...state,
+        markedPapers,
       };
     default:
       return state;

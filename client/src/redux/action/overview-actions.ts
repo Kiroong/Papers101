@@ -12,6 +12,10 @@ const unitActions = {
     'OVERVIEW/SET_SEED_PAPERS',
     (seedPapers: PaperEntry[]) => seedPapers
   )(),
+  setMarkedPapers: createAction(
+    'OVERVIEW/SET_MARKED_PAPERS',
+    (markedPapers: PaperEntry[]) => markedPapers
+  )(),
 };
 
 const thunkActions = {

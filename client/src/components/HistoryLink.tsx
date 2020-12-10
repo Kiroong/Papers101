@@ -5,15 +5,19 @@ import { PaperEntry } from "../redux/state/overview";
 interface Props {
   fromEntries: PaperEntry[];
   toEntries: PaperEntry[];
+  markedEntries: PaperEntry[];
   offsetHeight: number;
   cellHeight: number;
+  onSelect: () => any;
 }
 
 const HistoryLink: React.FC<Props> = ({
   fromEntries,
   toEntries,
+  markedEntries,
   offsetHeight,
   cellHeight,
+  onSelect,
 }) => {
   return (
     <div style={{ width: 200 }}>

@@ -1,4 +1,12 @@
-import { Box, Card, CardBody, CardHeader, Grid, Heading } from "grommet";
+import {
+  Box,
+  Card,
+  CardBody,
+  CardHeader,
+  CheckBox,
+  Grid,
+  Heading,
+} from "grommet";
 import React from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
@@ -13,6 +21,7 @@ const PapersTabularView: React.FC = () => {
   const paperEntries = useRootSelector((state) =>
     state.overview.paperEntries?.slice(0, 100)
   );
+  const markedPapers = useRootSelector((state) => state.overview.markedPapers);
 
   const keywordSimsMaxOfSum =
     paperEntries?.reduce(
@@ -67,6 +76,10 @@ const PapersTabularView: React.FC = () => {
                       ...paperEntries.slice(5, 100),
                       ...paperEntries.slice(0, 5).reverse(),
                     ]}
+                    markedEntries={markedPapers}
+                    onSelect={() => {
+
+                    }}
                     offsetHeight={40}
                     cellHeight={20}
                   />
@@ -79,6 +92,9 @@ const PapersTabularView: React.FC = () => {
                       ...paperEntries.slice(0, 5).reverse(),
                     ]}
                     toEntries={paperEntries}
+                    markedEntries={markedPapers}
+                    onSelect={() => {
+                    }}
                     offsetHeight={40}
                     cellHeight={20}
                   />
@@ -88,6 +104,7 @@ const PapersTabularView: React.FC = () => {
           <table>
             <thead>
               <tr style={{ height: 40, padding: 0 }}>
+                <th scope="col"></th>
                 <th scope="col">Title</th>
                 <th scope="col">Year</th>
                 <th scope="col">Keyword Similarity</th>
@@ -100,18 +117,39 @@ const PapersTabularView: React.FC = () => {
             <tbody>
               {paperEntries &&
                 paperEntries.map((entry, i) => (
-                  <tr
-                    onClick={() => {
-                      dispatch(
-                        actionOverview.setSeedPapers([...seedPapers, entry])
-                      );
-                    }}
-                    key={entry.doi}
-                    style={{ height: 20, padding: 0 }}
-                  >
-                    <th scope="row">
+                  <tr key={entry.doi} style={{ height: 20, padding: 0 }}>
+                    <td>
+                      <CheckBox
+                        checked={markedPapers.includes(entry)}
+                        onChange={() => {
+                          if (markedPapers.includes(entry)) {
+                            dispatch(
+                              actionOverview.setMarkedPapers(
+                                markedPapers.filter((p) => p !== entry)
+                              )
+                            );
+                          } else {
+                            dispatch(
+                              actionOverview.setMarkedPapers([
+                                ...markedPapers,
+                                entry,
+                              ])
+                            );
+                          }
+                        }}
+                      />
+                    </td>
+                    <td
+                      onClick={() => {
+                        if (!seedPapers.includes(entry)) {
+                          dispatch(
+                            actionOverview.setSeedPapers([...seedPapers, entry])
+                          );
+                        }
+                      }}
+                    >
                       <strong>{entry.title.slice(0, 50)}</strong>
-                    </th>
+                    </td>
                     <td>{entry.year}</td>
                     <td>
                       <SimilaritiesBar
