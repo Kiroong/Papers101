@@ -11,19 +11,9 @@ import React from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { useRootSelector } from "../redux/state/root-state";
+import { maxOfSum } from "../utils";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
-
-function maxOfSum(values: number[][]) {
-  return values.reduce(
-    (a, b) =>
-      Math.max(
-        a,
-        b.reduce((x, y) => x + y, 0)
-      ),
-    0
-  );
-}
 
 const PapersTabularView: React.FC = () => {
   const numHistories = 2;

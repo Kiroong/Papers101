@@ -1,4 +1,4 @@
-export const stopwords = `a
+export const stopwords = new Set(`a
 able
 about
 above
@@ -662,4 +662,4 @@ yourself
 yourselves
 you've
 z
-zero`.split("\n");
+zero`.split("\n"));

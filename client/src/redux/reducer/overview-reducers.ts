@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { getType } from "typesafe-actions";
+import { extractKeywords } from "../../utils";
 import { actionOverview } from "../action/overview-actions";
 import { ReducibleAction } from "../action/root-action";
 import { OverviewState, PaperEntry } from "../state/overview";
@@ -39,9 +40,12 @@ function updateSortedPaperEntries(
     }
     if (updateSeedPaperSims) {
       const seedPaperSims = state.seedPapers.map((seed) => {
-        const a = (entry.title + entry.abstract).toLowerCase().split(" ");
-        const b = (seed.title + seed.abstract).toLowerCase().split(" ");
-        return a.filter((x) => b.includes(x)).length;
+        const a = new Set(extractKeywords(entry.title + " " + entry.abstract))
+        const b = new Set(extractKeywords(seed.title + " " + seed.abstract))
+        const [union, intersection] = [new Set<string>([]), new Set<string>([])]
+        a.forEach(w => union.add(w)); b.forEach(w => union.add(w));
+        a.forEach(w => b.has(w) && intersection.add(w));
+        return intersection.size / union.size;
       });
       const referencedBySeedPapers = state.seedPapers.map((seed) => {
         return newEntry.referencedBy.includes(seed.doi) ? 1 : 0
