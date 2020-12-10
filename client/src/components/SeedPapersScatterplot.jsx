@@ -20,7 +20,7 @@ const SeedPapersScatterplot = ({
   // console.log(markedPapers.map((item) => item[xLabel]), markedPapers.map((item) => item[yLabel]))
 
 
-  let margin = { top: 5, bottom: 5, left: 5, right: 5 }
+  let margin = { top: 10, bottom: 20, left: 40, right: 10 }
   let height = svgHeight - margin.top - margin.bottom
   let width = svgWidth - margin.left - margin.right
   const container = useRef(null);
@@ -39,19 +39,32 @@ const SeedPapersScatterplot = ({
       .scaleLinear()
       .domain(d3.extent(papers.map((paper) => paper[yLabel])))
       .range([height, 0]);
+      
     let x = d3
       .scaleLinear()
       .domain(d3.extent(papers.map((paper) => paper[xLabel])))
       .range([0, width]);
 
-    svg
-      .append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      const yAxisTicks = y.ticks()
+    .filter(tick => Number.isInteger(tick));
+      const yAxis = d3.axisLeft(y)
+    .tickValues(yAxisTicks)
+    .tickFormat(d3.format('d'));
+
+    const xAxisTicks = x.ticks()
+    .filter(tick => Number.isInteger(tick));
+      const xAxis = d3.axisBottom(x)
+    .tickValues(xAxisTicks)
+    .tickFormat(d3.format('d'));
 
     svg
       .append("g")
-      .call(d3.axisLeft(y));
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    svg
+      .append("g")
+      .call(yAxis);
 
     if(xThreshold != null){
       svg.append('line')
@@ -61,6 +74,7 @@ const SeedPapersScatterplot = ({
       .attr('y1', 0)
       .attr('x2', x(xThreshold))
       .attr('y2', height)
+      .style('opacity', 0.5)
     }
 
     if(yThreshold != null && (seedPapers.length != 0 || markedPapers.length != 0)){
@@ -71,6 +85,8 @@ const SeedPapersScatterplot = ({
       .attr('y1', y(yThreshold))
       .attr('x2', width)
       .attr('y2', y(yThreshold))
+      .style('opacity', 0.5)
+
     }
 
 
@@ -83,7 +99,14 @@ const SeedPapersScatterplot = ({
       .attr('cx', d => x(d[xLabel]))
       .attr('cy', d => y(d[yLabel]))
       .attr('r', 3)
-      .style('opacity', 0.5)
+      .style('opacity', d => {
+        if (y(d[yLabel]) <= y(yThreshold)){
+          return 1;
+        }
+        else return 0.5;
+      }
+      )
+      .on('click', d => onClick(d))
 
 
     let markedCircle = svg.selectAll('circle')
@@ -95,9 +118,16 @@ const SeedPapersScatterplot = ({
       .attr('cx', d => x(d[xLabel]))
       .attr('cy', d => y(d[yLabel]))
       .attr('r', 3)
-      .style('opacity', 0.5)
+      .style('opacity', d => {
+        if (y(d[yLabel]) <= y(yThreshold)){
+          return 1;
+        }
+        else return 0.5;
+      })
+      .on('click', d => onClick(d))
 
-  })
+
+  }, [seedPapers, markedPapers])
 
 
   const y = d3
