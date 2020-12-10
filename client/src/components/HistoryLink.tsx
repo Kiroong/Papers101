@@ -36,7 +36,9 @@ const HistoryLink: React.FC<Props> = ({
     const svgHeight: number = cellHeight * 100
     const svgWidth: number = 200
     const root = useRef<HTMLDivElement>(null)
-    let selectHistory = () => {}
+    let selectHistory = () => {
+      onSelect()
+    }
 
     let handleCellClick = (event: any, d: any) => {
         if (markedEntries.map((me) => me.doi).includes(d.doi)) {
