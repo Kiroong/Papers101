@@ -12,6 +12,24 @@ const defaultOverviewState: OverviewState = {
   markedPapers: [],
   histories: [],
   seedPaperSimsCache: {},
+  weights: {
+    keywordSimilarity: {
+      maxVal: 1,
+      components: [],
+    },
+    referencedBySeedPapers: {
+      maxVal: 1,
+      components: [],
+    },
+    referencesSeedPapers: {
+      maxVal: 1,
+      components: [],
+    },
+    seedPaperSimilarity: {
+      maxVal: 1,
+      components: [],
+    },
+  },
 };
 
 function scoreOfEntry(entry: PaperEntry) {
@@ -23,7 +41,6 @@ function scoreOfEntry(entry: PaperEntry) {
   const score = keywordSim + referencedBySeedPapers + referencesSeedPapers;
   return score;
 }
-
 
 function updateSortedPaperEntries(
   state: OverviewState,
@@ -114,9 +131,19 @@ export const overviewReducer = (
     case getType(actionOverview.setKeywords): {
       const keywords = action.payload;
 
-      const nextState = {
+      const nextState: OverviewState = {
         ...state,
         keywords,
+        weights: {
+          ...state.weights,
+          keywordSimilarity: {
+            maxVal: 1,
+            components: keywords.map((keyword) => ({
+              keyword,
+              weight: Math.floor((1 / keywords.length) * 100),
+            })),
+          },
+        },
         histories: [...state.histories, state],
       };
       return {
@@ -126,9 +153,33 @@ export const overviewReducer = (
     }
     case getType(actionOverview.setSeedPapers): {
       const seedPapers = action.payload;
-      const nextState = {
+      const nextState: OverviewState = {
         ...state,
         seedPapers,
+        weights: {
+          ...state.weights,
+          seedPaperSimilarity: {
+            ...state.weights.seedPaperSimilarity,
+            components: seedPapers.map((entry) => ({
+              entry,
+              weight: Math.floor((1 / seedPapers.length) * 100),
+            })),
+          },
+          referencedBySeedPapers: {
+            ...state.weights.referencedBySeedPapers,
+            components: seedPapers.map((entry) => ({
+              entry,
+              weight: Math.floor((1 / seedPapers.length) * 100),
+            })),
+          },
+          referencesSeedPapers: {
+            ...state.weights.referencesSeedPapers,
+            components: seedPapers.map((entry) => ({
+              entry,
+              weight: Math.floor((1 / seedPapers.length) * 100),
+            })),
+          },
+        },
         histories: [...state.histories, state],
       };
       return {

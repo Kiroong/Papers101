@@ -1,9 +1,19 @@
-import { Card, CardBody, CardHeader, Grid, Heading } from "grommet";
-import React from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Grid,
+  Heading,
+  Layer,
+} from "grommet";
+import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { useRootSelector } from "../redux/state/root-state";
 import { maxOfSum } from "../utils";
+import AdjustWeightModal from "./AdjustWeightModal";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
 
@@ -35,11 +45,30 @@ const PapersTabularView: React.FC = () => {
     paperEntries.map((entry) => entry.referencesSeedPapers)
   );
   const dispatch = useThunkDispatch();
+  const [showWeightModal, setShowWeightModal] = useState(false);
 
   return (
     <Card fill={true} background="white" overflow={{ vertical: "scroll" }}>
       <CardHeader pad="small">
-        <Heading level="4">Papers</Heading>
+        <Box direction="row" gap="small" align="baseline">
+          <Heading level="4">Papers</Heading>
+          <Button
+            color="blue"
+            onClick={() => {
+              setShowWeightModal(true);
+            }}
+          >
+            Adjust weight
+          </Button>
+          {showWeightModal && (
+            <Layer
+              onEsc={() => setShowWeightModal(false)}
+              onClickOutside={() => setShowWeightModal(false)}
+            >
+              <AdjustWeightModal />
+            </Layer>
+          )}
+        </Box>
       </CardHeader>
       <CardBody pad="small" gap="small">
         <Grid
@@ -80,7 +109,6 @@ const PapersTabularView: React.FC = () => {
                 "1fr",
                 "1fr",
                 "1fr",
-                "1fr",
               ]}
             >
               <div></div>
@@ -92,7 +120,6 @@ const PapersTabularView: React.FC = () => {
               <div>Seed Paper Similarity</div>
               <div>Referenced by Seed Papers</div>
               <div>References Seed Papers</div>
-              <div>score</div>
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
@@ -167,7 +194,6 @@ const PapersTabularView: React.FC = () => {
                         maxOfSum={referencesSeedPapersMaxOfSum}
                       />
                     </div>
-                    <div>{entry.score}</div>
                   </>
                 ))}
             </Grid>
