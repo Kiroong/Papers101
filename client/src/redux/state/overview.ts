@@ -11,6 +11,8 @@ export interface PaperEntry {
   numReferenced: number;
   numReferencing: number;
   // ============= //
+  keywordSims: number[];
+  seedPaperSims: number[];
   score: number;
   [additionalColumn: string]: any;
 }

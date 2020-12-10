@@ -1,32 +1,37 @@
-// import { Button } from "grommet";
-import {
-  Box,
-  Card,
-  CardBody,
-  CardHeader,
-  Grid,
-  Heading,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "grommet";
+import { Box, Card, CardBody, CardHeader, Grid, Heading } from "grommet";
 import React from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { useRootSelector } from "../redux/state/root-state";
 import HistoryLink from "./HistoryLink";
+import SimilaritiesBar from "./SimilaritiesBar";
 
 const PapersTabularView: React.FC = () => {
   const numHistories = 2;
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
   const paperEntries = useRootSelector((state) =>
-    state.overview.paperEntries
-      ?.filter((entry) => !seedPapers.includes(entry))
-      .slice(0, 100)
+    state.overview.paperEntries?.slice(0, 100)
   );
+
+  const keywordSimsMaxOfSum =
+    paperEntries?.reduce(
+      (a, b) =>
+        Math.max(
+          a,
+          b.keywordSims.reduce((x, y) => x + y, 0)
+        ),
+      0
+    ) || 0;
+  const seedPaperSimsMaxOfSum =
+    paperEntries?.reduce(
+      (a, b) =>
+        Math.max(
+          a,
+          b.seedPaperSims.reduce((x, y) => x + y, 0)
+        ),
+      0
+    ) || 0;
   const dispatch = useThunkDispatch();
 
   return (
@@ -51,7 +56,7 @@ const PapersTabularView: React.FC = () => {
                 return null;
               }
               if (i === 0) {
-                const reversed = paperEntries.reverse();
+                const reversed = paperEntries.slice(0).reverse();
                 return (
                   <HistoryLink
                     fromEntries={[
@@ -105,30 +110,20 @@ const PapersTabularView: React.FC = () => {
                     style={{ height: 20, padding: 0 }}
                   >
                     <th scope="row">
-                      <strong>{entry.title}</strong>
+                      <strong>{entry.title.slice(0, 50)}</strong>
                     </th>
                     <td>{entry.year}</td>
                     <td>
-                      <Box justify="center" fill={true} direction="row">
-                        <Box
-                          height="10px"
-                          width="30px"
-                          background="lightgreen"
-                        />
-                        <Box height="10px" width="60px" background="pink" />
-                        <Box height="10px" width="20px" background="yellow" />
-                      </Box>
+                      <SimilaritiesBar
+                        similarities={entry.keywordSims}
+                        maxOfSum={keywordSimsMaxOfSum}
+                      />
                     </td>
                     <td>
-                      <Box justify="center" fill={true} direction="row">
-                        <Box
-                          height="10px"
-                          width="20px"
-                          background="lightgreen"
-                        />
-                        <Box height="10px" width="10px" background="pink" />
-                        <Box height="10px" width="70px" background="yellow" />
-                      </Box>
+                      <SimilaritiesBar
+                        similarities={entry.seedPaperSims}
+                        maxOfSum={seedPaperSimsMaxOfSum}
+                      />
                     </td>
                     <td>{entry.numReferencing}</td>
                     <td>{entry.numReferenced}</td>

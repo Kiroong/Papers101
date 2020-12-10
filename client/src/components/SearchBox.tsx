@@ -47,7 +47,13 @@ const SearchBox: React.FC = () => {
                 <Button
                   icon={<Icons.Close size="small" />}
                   hoverIndicator
-                  onClick={() => {}}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setKeywords(
+                        keywords.filter((k) => k !== item.entry)
+                      )
+                    );
+                  }}
                 />
               );
             }}
