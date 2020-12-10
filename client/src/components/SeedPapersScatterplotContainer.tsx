@@ -6,6 +6,7 @@ import SeedPapersScatterplot from "./SeedPapersScatterplot";
 const SeedPapersScatterplotContainer: React.FC = () => {
   const dispatch = useThunkDispatch();
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
+  const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
@@ -22,13 +23,14 @@ const SeedPapersScatterplotContainer: React.FC = () => {
     >
       {width && height && (
         <SeedPapersScatterplot
-          papers={seedPapers}
+          seedPapers={seedPapers}
+          markedPapers={markedPapers}
           svgWidth={width * 0.9}
           svgHeight={height * 0.9}
           onClick={() => {}}
-          xLabel="numReferencing"
+          xLabel="score"
           yLabel="year" 
-          xThreshold={10}
+          xThreshold={null}
           yThreshold={2017}
         />
       )}

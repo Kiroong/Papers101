@@ -13,6 +13,8 @@ export interface PaperEntry {
   // ============= //
   keywordSims: number[];
   seedPaperSims: number[];
+  referencedBySeedPapers: number[];
+  referencesSeedPapers: number[];
   score: number;
   [additionalColumn: string]: any;
 }

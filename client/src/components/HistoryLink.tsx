@@ -54,6 +54,7 @@ const HistoryLink: React.FC<Props> = ({
             .attr('fill', 'red')
     }, [fromEntries])
     */
+   /*
     useEffect(() => {
         let _root = d3.select(root.current)
         let _lineData: HistoryLine[] = []
@@ -82,7 +83,7 @@ const HistoryLink: React.FC<Props> = ({
             .attr('stroke-width', cellHeight)
             .attr('opacity', 0.6)
     }, [toEntries])
-
+      */
     useEffect(() => {}, [markedEntries])
 
     useEffect(() => {}, [offsetHeight, cellHeight])
@@ -114,7 +115,9 @@ const HistoryLink: React.FC<Props> = ({
                             height={cellHeight}
                             x={0}
                             y={cellHeight * fi}
-                            fill={'red'}
+                            fill={'white'}
+                            stroke={'black'}
+                            stroke-width={1}
                         />
                     ))}
 
@@ -122,11 +125,12 @@ const HistoryLink: React.FC<Props> = ({
                         <line
                             className={'line-history'}
                             x1={svgWidth}
-                            y1={(ti+1)*cellHeight}
+                            y1={(ti+0.5)*cellHeight}
                             x2={svgWidth/4}
-                            y2={(matchToFrom(te.doi)+1)*cellHeight}
+                            y2={(matchToFrom(te.doi)+0.5)*cellHeight}
                             stroke={'black'}
-                            stroke-width={cellHeight}
+                            stroke-width={cellHeight*0.8}
+                            opacity={0.6}
                         />
                     ))}
                 </g>
