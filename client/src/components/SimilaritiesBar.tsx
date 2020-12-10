@@ -1,5 +1,4 @@
 import * as d3 from "d3";
-import { Box } from "grommet";
 import React, { useLayoutEffect, useRef, useState } from "react";
 
 interface Props {
@@ -18,16 +17,29 @@ const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum }) => {
     }
   });
   return (
-    <Box justify="center" fill={true} direction="row" ref={container}>
-      {width && height && similarities.map((sim, i) => (
-        <Box
-          margin={{ top: `${height * 0.25}px`}}
-          height={`${height * 0.5}px`}
-          width={`${sim / maxOfSum * width}px`}
-          background={d3.schemeTableau10[Math.min(9, i)]}
-        />
-      ))}
-    </Box>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+      }}
+      ref={container}
+    >
+      {width &&
+        height &&
+        similarities.map((sim, i) => (
+          <div
+            style={{
+              marginTop: height * 0.25,
+              height: height * 0.5,
+              width: (sim / maxOfSum) * width * 0.8,
+              marginLeft: i ? 0 : (sim / maxOfSum) * width * 0.1,
+              backgroundColor: d3.schemeTableau10[Math.min(9, i)],
+            }}
+          />
+        ))}
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { getType } from "typesafe-actions";
+import { extractKeywords } from "../../utils";
 import { actionOverview } from "../action/overview-actions";
 import { ReducibleAction } from "../action/root-action";
 import { OverviewState, PaperEntry } from "../state/overview";
@@ -9,6 +10,26 @@ const defaultOverviewState: OverviewState = {
   keywords: [],
   seedPapers: [],
   markedPapers: [],
+  histories: [],
+  seedPaperSimsCache: {},
+  weights: {
+    keywordSimilarity: {
+      maxVal: 1,
+      components: [],
+    },
+    referencedBySeedPapers: {
+      maxVal: 1,
+      components: [],
+    },
+    referencesSeedPapers: {
+      maxVal: 1,
+      components: [],
+    },
+    seedPaperSimilarity: {
+      maxVal: 1,
+      components: [],
+    },
+  },
 };
 
 function scoreOfEntry(entry: PaperEntry) {
@@ -27,6 +48,7 @@ function updateSortedPaperEntries(
   updateSeedPaperSims: boolean
 ) {
   const updated = state.paperEntries.map((entry) => {
+    const seedPaperSimsCache = state.seedPaperSimsCache; // going to mutate it as it's cache
     let newEntry = { ...entry };
     if (updateKeywordSims) {
       const keywordSims = state.keywords.map(
@@ -39,22 +61,45 @@ function updateSortedPaperEntries(
     }
     if (updateSeedPaperSims) {
       const seedPaperSims = state.seedPapers.map((seed) => {
-        const a = (entry.title + entry.abstract).toLowerCase().split(" ");
-        const b = (seed.title + seed.abstract).toLowerCase().split(" ");
-        return a.filter((x) => b.includes(x)).length;
+        if (!(seed.doi in seedPaperSimsCache)) {
+          seedPaperSimsCache[seed.doi] = {};
+        }
+        if (!seedPaperSimsCache[seed.doi][entry.doi]) {
+          const a = new Set(
+            extractKeywords(entry.title + " " + entry.abstract)
+          );
+          const b = new Set(extractKeywords(seed.title + " " + seed.abstract));
+          const [union, intersection] = [
+            new Set<string>([]),
+            new Set<string>([]),
+          ];
+          a.forEach((w) => union.add(w));
+          b.forEach((w) => union.add(w));
+          a.forEach((w) => b.has(w) && intersection.add(w));
+          seedPaperSimsCache[seed.doi][entry.doi] =
+            intersection.size / union.size;
+        }
+        return seedPaperSimsCache[seed.doi][entry.doi];
       });
       const referencedBySeedPapers = state.seedPapers.map((seed) => {
-        return newEntry.referencedBy.includes(seed.doi) ? 1 : 0
-      })
+        return newEntry.referencedBy.includes(seed.doi) ? 1 : 0;
+      });
       const referencesSeedPapers = state.seedPapers.map((seed) => {
-        return newEntry.referencing.includes(seed.doi) ? 1 : 0
-      })
-      newEntry = { ...newEntry, seedPaperSims, referencedBySeedPapers, referencesSeedPapers };
+        return newEntry.referencing.includes(seed.doi) ? 1 : 0;
+      });
+      newEntry = {
+        ...newEntry,
+        seedPaperSims,
+        referencedBySeedPapers,
+        referencesSeedPapers,
+      };
     }
     newEntry = { ...newEntry, score: scoreOfEntry(newEntry) };
     return newEntry;
   });
-  const sorted = updated.sort((a, b) => a.score === b.score ? b.year - a.year : b.score - a.score);
+  const sorted = updated.sort((a, b) =>
+    a.score === b.score ? b.year - a.year : b.score - a.score
+  );
   return sorted;
 }
 
@@ -86,9 +131,20 @@ export const overviewReducer = (
     case getType(actionOverview.setKeywords): {
       const keywords = action.payload;
 
-      const nextState = {
+      const nextState: OverviewState = {
         ...state,
         keywords,
+        weights: {
+          ...state.weights,
+          keywordSimilarity: {
+            maxVal: 1,
+            components: keywords.map((keyword) => ({
+              keyword,
+              weight: Math.floor((1 / keywords.length) * 100),
+            })),
+          },
+        },
+        histories: [...state.histories, state],
       };
       return {
         ...nextState,
@@ -97,9 +153,34 @@ export const overviewReducer = (
     }
     case getType(actionOverview.setSeedPapers): {
       const seedPapers = action.payload;
-      const nextState = {
+      const nextState: OverviewState = {
         ...state,
         seedPapers,
+        weights: {
+          ...state.weights,
+          seedPaperSimilarity: {
+            ...state.weights.seedPaperSimilarity,
+            components: seedPapers.map((entry) => ({
+              entry,
+              weight: Math.floor((1 / seedPapers.length) * 100),
+            })),
+          },
+          referencedBySeedPapers: {
+            ...state.weights.referencedBySeedPapers,
+            components: seedPapers.map((entry) => ({
+              entry,
+              weight: Math.floor((1 / seedPapers.length) * 100),
+            })),
+          },
+          referencesSeedPapers: {
+            ...state.weights.referencesSeedPapers,
+            components: seedPapers.map((entry) => ({
+              entry,
+              weight: Math.floor((1 / seedPapers.length) * 100),
+            })),
+          },
+        },
+        histories: [...state.histories, state],
       };
       return {
         ...nextState,
@@ -112,6 +193,15 @@ export const overviewReducer = (
         ...state,
         markedPapers,
       };
+    case getType(actionOverview.setHistories):
+      const histories = action.payload;
+      return {
+        ...state,
+        histories,
+      };
+    case getType(actionOverview.selectHistory):
+      const history = action.payload;
+      return history;
     default:
       return state;
   }

@@ -148,7 +148,7 @@ const HistoryLink: React.FC<Props> = ({
             .join('line')
             .classed('line-history', true)
             .attr('x1', (d: HistoryLine) =>
-                d.fromIndex >= 0 ? svgWidth / 4 : svgWidth * (3 / 4)
+                d.fromIndex >= 0 ? svgWidth / 4 : svgWidth * (0.99)
             )
             .attr('y1', (d: HistoryLine) =>
                 d.fromIndex >= 0
@@ -162,7 +162,7 @@ const HistoryLink: React.FC<Props> = ({
                     ? 'red'
                     : 'black'
             )
-            .attr('stroke-width', cellHeight * 0.8)
+            .attr('stroke-width', cellHeight * 0.6)
             .attr('stroke-linecap', 'round')
             .attr('opacity', 0.3)
             .on('click', (e, d) => handleLinkClick(e, d))

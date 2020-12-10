@@ -1,33 +1,29 @@
 import {
   Box,
+  Button,
   Card,
   CardBody,
   CardHeader,
-  CheckBox,
   Grid,
   Heading,
+  Layer,
 } from "grommet";
-import React from "react";
+import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
+import { maxOfSum } from "../utils";
+import AdjustWeightModal from "./AdjustWeightModal";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
 
-function maxOfSum(values: number[][]) {
-  return values.reduce(
-    (a, b) =>
-      Math.max(
-        a,
-        b.reduce((x, y) => x + y, 0)
-      ),
-    0
-  );
-}
-
 const PapersTabularView: React.FC = () => {
-  const numHistories = 2;
+  const histories = useRootSelector((state) => [
+    ...state.overview.histories,
+    state.overview,
+  ]);
+  const numHistories = Math.min(2, histories.length - 1);
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
   const paperEntries = useRootSelector((state) =>
@@ -52,11 +48,30 @@ const PapersTabularView: React.FC = () => {
     paperEntries.map((entry) => entry.referencesSeedPapers)
   );
   const dispatch = useThunkDispatch();
+  const [showWeightModal, setShowWeightModal] = useState(false);
 
   return (
     <Card fill={true} background="white" overflow={{ vertical: "scroll" }}>
       <CardHeader pad="small">
-        <Heading level="4">Papers</Heading>
+        <Box direction="row" gap="small" align="baseline">
+          <Heading level="4">Papers</Heading>
+          <Button
+            color="blue"
+            onClick={() => {
+              setShowWeightModal(true);
+            }}
+          >
+            Adjust weight
+          </Button>
+          {showWeightModal && (
+            <Layer
+              onEsc={() => setShowWeightModal(false)}
+              onClickOutside={() => setShowWeightModal(false)}
+            >
+              <AdjustWeightModal />
+            </Layer>
+          )}
+        </Box>
       </CardHeader>
       <CardBody pad="small" gap="small">
         <Grid
@@ -70,53 +85,33 @@ const PapersTabularView: React.FC = () => {
         >
           {Array(numHistories)
             .fill(0)
-            .map((_, i) => {
-              if (!paperEntries) {
-                return null;
-              }
-              if (i === 0) {
-                const reversed = paperEntries.slice(0).reverse();
-                return (
-                  <HistoryLink
-                    fromEntries={[
-                      ...paperEntries.slice(10, 100),
-                      ...paperEntries.slice(0, 10).reverse(),
-                    ]}
-                    toEntries={[
-                      ...paperEntries.slice(5, 100),
-                      ...paperEntries.slice(0, 5).reverse(),
-                    ]}
-                    markedEntries={markedPapers}
-                    setMarkedEntries={setMarkedPapers}
-                    onSelect={() => {}}
-                    offsetHeight={40}
-                    cellHeight={20}
-                  />
-                );
-              } else if (i === 1) {
-                return (
-                  <HistoryLink
-                    fromEntries={[
-                      ...paperEntries.slice(5, 100),
-                      ...paperEntries.slice(0, 5).reverse(),
-                    ]}
-                    toEntries={paperEntries}
-                    markedEntries={markedPapers}
-                    setMarkedEntries={setMarkedPapers}
-                    onSelect={() => {}}
-                    offsetHeight={40}
-                    cellHeight={20}
-                  />
-                );
-              }
-            })}
+            .map((_, i) => (
+              <HistoryLink
+                fromEntries={
+                  histories.slice(-(numHistories - 1 - i + 2))[0].paperEntries.slice(0, 100)
+                }
+                toEntries={
+                  histories.slice(-(numHistories - 1 - i + 1))[0].paperEntries.slice(0, 100)
+                }
+                markedEntries={markedPapers}
+                setMarkedEntries={setMarkedPapers}
+                onSelect={() => {
+                  dispatch(
+                    actionOverview.selectHistory(
+                      histories.slice(-(numHistories - 1 - i + 2))[0]
+                    )
+                  );
+                }}
+                offsetHeight={40}
+                cellHeight={20}
+              />
+            ))}
           <div>
             <Grid
               rows={["40px", ...paperEntries.map((_) => "20px")]}
               columns={[
                 "auto",
                 "4fr",
-                "1fr",
                 "1fr",
                 "1fr",
                 "1fr",
@@ -135,7 +130,6 @@ const PapersTabularView: React.FC = () => {
               <div>Seed Paper Similarity</div>
               <div>Referenced by Seed Papers</div>
               <div>References Seed Papers</div>
-              <div>score</div>
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
@@ -210,7 +204,6 @@ const PapersTabularView: React.FC = () => {
                         maxOfSum={referencesSeedPapersMaxOfSum}
                       />
                     </div>
-                    <div>{entry.score}</div>
                   </>
                 ))}
             </Grid>

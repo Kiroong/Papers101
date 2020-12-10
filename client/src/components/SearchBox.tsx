@@ -30,7 +30,17 @@ const SearchBox: React.FC = () => {
         <Heading level="4">Search Box</Heading>
       </CardHeader>
       <CardBody pad="small" gap="small">
-        <Heading level="5">Keywords</Heading>
+        <Box direction="row" align="baseline" gap="small">
+          <Heading level="5">Keywords</Heading>
+          <Button
+            color="blue"
+            onClick={() => {
+              dispatch(actionOverview.setKeywords([]));
+            }}
+          >
+            clear
+          </Button>
+        </Box>
         <Form
           onSubmit={() => {
             dispatch(actionOverview.setKeywords([...keywords, currentKeyword]));
@@ -76,7 +86,17 @@ const SearchBox: React.FC = () => {
             )}
           </List>
         </Form>
-        <Heading level="5">Seed papers</Heading>
+        <Box direction="row" align="baseline" gap="small">
+          <Heading level="5">Seed papers</Heading>
+          <Button
+            color="blue"
+            onClick={() => {
+              dispatch(actionOverview.setSeedPapers([]));
+            }}
+          >
+            clear
+          </Button>
+        </Box>
         <Form onSubmit={() => {}}>
           <List
             data={seedPapers.map((entry) => entry)}

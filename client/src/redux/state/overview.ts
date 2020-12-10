@@ -19,10 +19,30 @@ export interface PaperEntry {
   [additionalColumn: string]: any;
 }
 
-
 export interface OverviewState {
   paperEntries: PaperEntry[];
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
   keywords: string[];
+  histories: OverviewState[];
+  weights: {
+    keywordSimilarity: {
+      maxVal: number;
+      components: { keyword: string; weight: number }[];
+    };
+    seedPaperSimilarity: {
+      maxVal: number;
+      components: { entry: PaperEntry; weight: number }[];
+    };
+    referencedBySeedPapers: {
+      maxVal: number;
+      components: { entry: PaperEntry; weight: number }[];
+    };
+    referencesSeedPapers: {
+      maxVal: number;
+      components: { entry: PaperEntry; weight: number }[];
+    };
+  };
+  //==============//
+  seedPaperSimsCache: { [doi: string]: { [doi: string]: number } };
 }

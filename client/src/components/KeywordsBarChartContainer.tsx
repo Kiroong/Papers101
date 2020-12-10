@@ -2,8 +2,8 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { useRootSelector } from "../redux/state/root-state";
+import { extractKeywords } from "../utils";
 import KeywordsBarChart from "./KeywordsBarChart";
-import { stopwords } from "./stopwords";
 
 interface Props {}
 
@@ -14,9 +14,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
   const wordCounts = useMemo(() => {
     const count = {} as { [word: string]: number };
     seedPapers.forEach((entry) => {
-      entry.abstract
-        .split(" ")
-        .map((word) => word.toLowerCase().replace(/[^a-zA-Z\-]/g, ""))
+      extractKeywords(entry.title + " " + entry.abstract)
         .forEach((word) =>
           count[word] ? (count[word] += 1) : (count[word] = 1)
         );
@@ -31,10 +29,6 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
     });
     return Object.entries(count)
       .sort((a, b) => b[1] - a[1])
-      .filter(
-        ([word, count]) =>
-          word.length >= 2 && !stopwords.includes(word.toLowerCase())
-      )
       .slice(0, 50)
       .map(([word, count]) => ({
         word,
