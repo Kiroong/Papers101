@@ -202,6 +202,12 @@ export const overviewReducer = (
     case getType(actionOverview.selectHistory):
       const history = action.payload;
       return history;
+    case getType(actionOverview.setWeights):
+      const weights = action.payload;
+      return {
+        ...state,
+        weights
+      }
     default:
       return state;
   }

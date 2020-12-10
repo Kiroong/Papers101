@@ -1,5 +1,5 @@
 import { createAction } from "typesafe-actions";
-import { OverviewState, PaperEntry } from "../state/overview";
+import { OverviewState, PaperEntry, Weights } from "../state/overview";
 import { getData } from "./api/api";
 import { makeThunk } from "./utils";
 
@@ -19,6 +19,10 @@ const unitActions = {
   setHistories: createAction(
     "OVERVIEW/SET_HISTORIES",
     (histories: OverviewState[]) => histories
+  )(),
+  setWeights: createAction(
+    "OVERVIEW/SET_WEIGHTS",
+    (weights: Weights) => weights
   )(),
   selectHistory: createAction(
     "OVERVIEW/SELECT_HISTORY",
