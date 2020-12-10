@@ -123,7 +123,11 @@ const HistoryLink: React.FC<Props> = ({
             .attr('width', svgWidth / 4)
             .attr('stroke', 'black')
             .attr('stroke-width', 1)
-            .attr('fill', 'white')
+            .attr('fill', (d: PaperEntry) => 
+              markedEntries.map((me) => me.doi).includes(d.doi)
+                    ? 'red'
+                    : 'white'
+            )
             .on('click', (e, d) => handleCellClick(e, d))
         //.on('mouseover', (e, d) => handleCellMouseover(e, d))
         //.on('mouseout', (e, d) => handleMouseout(e, d))
@@ -164,12 +168,16 @@ const HistoryLink: React.FC<Props> = ({
             )
             .attr('stroke-width', cellHeight * 0.6)
             .attr('stroke-linecap', 'round')
-            .attr('opacity', 0.3)
+            .attr('opacity', (d) =>
+            markedEntries.map((me) => me.doi).includes(d.toDoi)
+                ? 0.5
+                : 0.2
+        )
             .on('click', (e, d) => handleLinkClick(e, d))
         //.on('mouseover', (e, d) => handleLinkMouseover(e, d))
         //.on('mouseout', (e, d) => handleMouseout(e, d))
     }, [toEntries])
-
+    /*
     useEffect(() => {
         let _root = d3.select(root.current).select('svg').select('.history')
 
@@ -189,7 +197,7 @@ const HistoryLink: React.FC<Props> = ({
             .attr('stroke', 'red')
             .raise()
     }, [markedEntries])
-
+    */
     useEffect(() => {}, [offsetHeight, cellHeight])
 
     let matchToFrom = (toDoi: string): number => {
