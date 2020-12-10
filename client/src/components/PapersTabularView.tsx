@@ -10,6 +10,7 @@ import {
 import React from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
+import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
@@ -35,7 +36,9 @@ const PapersTabularView: React.FC = () => {
       .slice(0, 100)
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
-
+  const setMarkedPapers = (newMarked: PaperEntry[]) => dispatch(actionOverview.setMarkedPapers(
+    newMarked
+  ))
   const keywordSimsMaxOfSum = maxOfSum(
     paperEntries.map((entry) => entry.keywordSims)
   );
@@ -84,6 +87,7 @@ const PapersTabularView: React.FC = () => {
                       ...paperEntries.slice(0, 5).reverse(),
                     ]}
                     markedEntries={markedPapers}
+                    setMarkedEntries={setMarkedPapers}
                     onSelect={() => {}}
                     offsetHeight={40}
                     cellHeight={20}
@@ -98,6 +102,7 @@ const PapersTabularView: React.FC = () => {
                     ]}
                     toEntries={paperEntries}
                     markedEntries={markedPapers}
+                    setMarkedEntries={setMarkedPapers}
                     onSelect={() => {}}
                     offsetHeight={40}
                     cellHeight={20}
