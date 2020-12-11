@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { getType } from "typesafe-actions";
-import { extractKeywords } from "../../utils";
+import { extractKeywords, maxOfSum } from "../../utils";
 import { actionOverview } from "../action/overview-actions";
 import { ReducibleAction } from "../action/root-action";
 import { OverviewState, PaperEntry } from "../state/overview";
@@ -31,16 +31,6 @@ const defaultOverviewState: OverviewState = {
     },
   },
 };
-
-function scoreOfEntry(entry: PaperEntry) {
-  const keywordSim = d3.sum(entry.keywordSims);
-  const seedPaperSim = d3.sum(entry.seedPaperSims);
-  const referencesSeedPapers = d3.sum(entry.referencesSeedPapers);
-  const referencedBySeedPapers = d3.sum(entry.referencedBySeedPapers);
-  // const score = keywordSim + seedPaperSim + referencedBySeedPapers + referencesSeedPapers;
-  const score = keywordSim + referencedBySeedPapers + referencesSeedPapers;
-  return score;
-}
 
 function updateSortedPaperEntries(
   state: OverviewState,
@@ -94,10 +84,77 @@ function updateSortedPaperEntries(
         referencesSeedPapers,
       };
     }
-    newEntry = { ...newEntry, score: scoreOfEntry(newEntry) };
     return newEntry;
   });
-  const sorted = updated.sort((a, b) =>
+
+  const keywordSimsMaxOfSum = maxOfSum(
+    updated.map((entry) => entry.keywordSims)
+  );
+  const withoutSeedPapers = updated
+      .filter(
+        (entry) => !state.seedPapers.map((d) => d.doi).includes(entry.doi)
+      )
+  const seedPaperSimsMaxOfSum = maxOfSum(
+    withoutSeedPapers.map((entry) => entry.seedPaperSims)
+  );
+  const referencedBySeedPapersMaxOfSum = maxOfSum(
+    withoutSeedPapers.map((entry) => entry.referencedBySeedPapers)
+  );
+  const referencesSeedPapersMaxOfSum = maxOfSum(
+    withoutSeedPapers.map((entry) => entry.referencesSeedPapers)
+  );
+
+  const normalized = updated.map((entry) => ({
+    ...entry,
+    keywordSims: entry.keywordSims.map((sim) => sim / keywordSimsMaxOfSum),
+    seedPaperSims: entry.seedPaperSims.map(
+      (sim) => sim / seedPaperSimsMaxOfSum
+    ),
+    referencedBySeedPapers: entry.referencedBySeedPapers.map(
+      (sim) => sim / referencedBySeedPapersMaxOfSum
+    ),
+    referencsySeedPapers: entry.referencesSeedPapers.map(
+      (sim) => sim / referencesSeedPapersMaxOfSum
+    ),
+  }));
+
+  const inner = (as: number[], bs: number[]) =>
+    as.reduce((acc, a, i) => acc + a * bs[i], 0);
+
+  const withScore = normalized.map((entry) => ({
+    ...entry,
+    score:
+      inner(
+        entry.keywordSims,
+        state.weights.keywordSimilarity.components.map(
+          (comp) => comp.weight / 100
+        )
+      ) *
+        state.weights.keywordSimilarity.maxVal +
+      inner(
+        entry.seedPaperSims,
+        state.weights.seedPaperSimilarity.components.map(
+          (comp) => comp.weight / 100
+        )
+      ) *
+        state.weights.seedPaperSimilarity.maxVal +
+      inner(
+        entry.referencesSeedPapers,
+        state.weights.referencesSeedPapers.components.map(
+          (comp) => comp.weight / 100
+        )
+      ) *
+        state.weights.referencesSeedPapers.maxVal +
+      inner(
+        entry.referencedBySeedPapers,
+        state.weights.referencedBySeedPapers.components.map(
+          (comp) => comp.weight / 100
+        )
+      ) *
+        state.weights.referencedBySeedPapers.maxVal,
+  }));
+
+  const sorted = withScore.sort((a, b) =>
     a.score === b.score ? b.year - a.year : b.score - a.score
   );
   return sorted;
@@ -144,7 +201,7 @@ export const overviewReducer = (
             })),
           },
         },
-        histories: [...state.histories, state],
+        // histories: [...state.histories, state],
       };
       return {
         ...nextState,
@@ -180,11 +237,11 @@ export const overviewReducer = (
             })),
           },
         },
-        histories: [...state.histories, state],
       };
       return {
         ...nextState,
         paperEntries: updateSortedPaperEntries(nextState, false, true),
+        // histories: [...state.histories, state],
       };
     }
     case getType(actionOverview.setMarkedPapers):
@@ -202,12 +259,18 @@ export const overviewReducer = (
     case getType(actionOverview.selectHistory):
       const history = action.payload;
       return history;
-    case getType(actionOverview.setWeights):
+    case getType(actionOverview.setWeights): {
       const weights = action.payload;
-      return {
+      const nextState: OverviewState = {
         ...state,
-        weights
-      }
+        weights,
+        histories: [...state.histories, state],
+      };
+      return {
+        ...nextState,
+        paperEntries: updateSortedPaperEntries(nextState, false, false),
+      };
+    }
     default:
       return state;
   }

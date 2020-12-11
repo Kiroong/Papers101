@@ -6,14 +6,13 @@ import {
   CardHeader,
   Grid,
   Heading,
-  Layer,
+  Layer
 } from "grommet";
 import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
-import { maxOfSum } from "../utils";
 import AdjustWeightModal from "./AdjustWeightModal";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
@@ -32,20 +31,10 @@ const PapersTabularView: React.FC = () => {
       .slice(0, 100)
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
+  const weights = useRootSelector((state) => state.overview.weights);
   const setMarkedPapers = (newMarked: PaperEntry[]) =>
     dispatch(actionOverview.setMarkedPapers(newMarked));
-  const keywordSimsMaxOfSum = maxOfSum(
-    paperEntries.map((entry) => entry.keywordSims)
-  );
-  const seedPaperSimsMaxOfSum = maxOfSum(
-    paperEntries.map((entry) => entry.seedPaperSims)
-  );
-  const referencedBySeedPapersMaxOfSum = maxOfSum(
-    paperEntries.map((entry) => entry.referencedBySeedPapers)
-  );
-  const referencesSeedPapersMaxOfSum = maxOfSum(
-    paperEntries.map((entry) => entry.referencesSeedPapers)
-  );
+
   const dispatch = useThunkDispatch();
   const [showWeightModal, setShowWeightModal] = useState(false);
 
@@ -196,25 +185,25 @@ const PapersTabularView: React.FC = () => {
                     <div>
                       <SimilaritiesBar
                         similarities={entry.keywordSims}
-                        maxOfSum={keywordSimsMaxOfSum}
+                        maxOfSum={1}
                       />
                     </div>
                     <div>
                       <SimilaritiesBar
                         similarities={entry.seedPaperSims}
-                        maxOfSum={seedPaperSimsMaxOfSum}
+                        maxOfSum={1}
                       />
                     </div>
                     <div>
                       <SimilaritiesBar
                         similarities={entry.referencedBySeedPapers}
-                        maxOfSum={referencedBySeedPapersMaxOfSum}
+                        maxOfSum={1}
                       />
                     </div>
                     <div>
                       <SimilaritiesBar
                         similarities={entry.referencesSeedPapers}
-                        maxOfSum={referencesSeedPapersMaxOfSum}
+                        maxOfSum={1}
                       />
                     </div>
                   </>
