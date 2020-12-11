@@ -136,14 +136,35 @@ const PapersTabularView: React.FC = () => {
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
-                    <div>
-                      <input
-                        type="checkbox"
-                        style={{ height: 12 }}
-                        checked={markedPapers
-                          .map((p) => p.doi)
-                          .includes(entry.doi)}
-                        onChange={() => {
+                    <Box
+                      direction="row"
+                      align="baseline"
+                      gap="small"
+                      margin={{ horizontal: "small" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (!seedPapers.includes(entry)) {
+                            dispatch(
+                              actionOverview.setSeedPapers([
+                                ...seedPapers,
+                                entry,
+                              ])
+                            );
+                          }
+                        }}
+                      >
+                        SEED
+                      </Button>
+                      <Button
+                        style={{
+                          backgroundColor: markedPapers
+                            .map((p) => p.doi)
+                            .includes(entry.doi)
+                            ? "purple"
+                            : "white",
+                        }}
+                        onClick={() => {
                           if (
                             markedPapers.map((p) => p.doi).includes(entry.doi)
                           ) {
@@ -161,18 +182,11 @@ const PapersTabularView: React.FC = () => {
                             );
                           }
                         }}
-                      />
-                    </div>
-                    <TitleBox
-                      entry={entry}
-                      onClick={() => {
-                        if (!seedPapers.includes(entry)) {
-                          dispatch(
-                            actionOverview.setSeedPapers([...seedPapers, entry])
-                          );
-                        }
-                      }}
-                    />
+                      >
+                        MARK
+                      </Button>
+                    </Box>
+                    <TitleBox entry={entry} />
                     <div>{entry.year}</div>
                     <div>{entry.numReferencing}</div>
                     <div>{entry.numReferenced}</div>

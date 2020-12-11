@@ -4,10 +4,9 @@ import { PaperEntry } from "../redux/state/overview";
 
 interface Props {
   entry: PaperEntry;
-  onClick: () => any;
 }
 
-const TitleBox: React.FC<Props> = ({ entry, onClick }) => {
+const TitleBox: React.FC<Props> = ({ entry }) => {
   const [show, setShow] = useState(false);
   return (
     <div
