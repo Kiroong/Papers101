@@ -201,7 +201,7 @@ export const overviewReducer = (
             })),
           },
         },
-        // histories: [...state.histories, state],
+        histories: [...state.histories, state],
       };
       return {
         ...nextState,
@@ -241,7 +241,7 @@ export const overviewReducer = (
       return {
         ...nextState,
         paperEntries: updateSortedPaperEntries(nextState, false, true),
-        // histories: [...state.histories, state],
+        histories: [...state.histories, state],
       };
     }
     case getType(actionOverview.setMarkedPapers):
