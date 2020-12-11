@@ -6,7 +6,7 @@ import {
   CardHeader,
   Grid,
   Heading,
-  Layer
+  Layer,
 } from "grommet";
 import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
@@ -16,6 +16,7 @@ import { useRootSelector } from "../redux/state/root-state";
 import AdjustWeightModal from "./AdjustWeightModal";
 import HistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
+import TitleBox from "./TitleBox";
 
 const PapersTabularView: React.FC = () => {
   const histories = useRootSelector((state) => [
@@ -139,9 +140,13 @@ const PapersTabularView: React.FC = () => {
                       <input
                         type="checkbox"
                         style={{ height: 12 }}
-                        checked={markedPapers.map(p => p.doi).includes(entry.doi)}
+                        checked={markedPapers
+                          .map((p) => p.doi)
+                          .includes(entry.doi)}
                         onChange={() => {
-                          if (markedPapers.map(p => p.doi).includes(entry.doi)) {
+                          if (
+                            markedPapers.map((p) => p.doi).includes(entry.doi)
+                          ) {
                             dispatch(
                               actionOverview.setMarkedPapers(
                                 markedPapers.filter((p) => p.doi !== entry.doi)
@@ -158,7 +163,8 @@ const PapersTabularView: React.FC = () => {
                         }}
                       />
                     </div>
-                    <div
+                    <TitleBox
+                      entry={entry}
                       onClick={() => {
                         if (!seedPapers.includes(entry)) {
                           dispatch(
@@ -166,19 +172,7 @@ const PapersTabularView: React.FC = () => {
                           );
                         }
                       }}
-                      style={{
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                      }}
-                    >
-                      <strong
-                        style={{
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {entry.title}
-                      </strong>
-                    </div>
+                    />
                     <div>{entry.year}</div>
                     <div>{entry.numReferencing}</div>
                     <div>{entry.numReferenced}</div>
