@@ -16,8 +16,8 @@ const SeedPapersScatterplot = ({
   // console.log(svgHeight)
   // console.log(seedPapers, markedPapers)
   // console.log("THRESHOLD: ", xThreshold, yThreshold)
-  // console.log(seedPapers.map((item) => item[xLabel]), seedPapers.map((item) => item[yLabel]))
-  // console.log(markedPapers.map((item) => item[xLabel]), markedPapers.map((item) => item[yLabel]))
+  console.log(seedPapers.map((item) => item[xLabel]), seedPapers.map((item) => item[yLabel]))
+  console.log(markedPapers.map((item) => item[xLabel]), markedPapers.map((item) => item[yLabel]))
 
 
   let margin = { top: 10, bottom: 20, left: 40, right: 10 }
@@ -52,10 +52,10 @@ const SeedPapersScatterplot = ({
     .tickFormat(d3.format('d'));
 
     const xAxisTicks = x.ticks()
-    .filter(tick => Number.isInteger(tick));
+    // .filter(tick => Number.isInteger(tick));
       const xAxis = d3.axisBottom(x)
     .tickValues(xAxisTicks)
-    .tickFormat(d3.format('d'));
+    .tickFormat(d3.format(".1f"));
 
     svg
       .append("g")
