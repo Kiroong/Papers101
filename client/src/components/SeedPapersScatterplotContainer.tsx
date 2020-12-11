@@ -7,6 +7,7 @@ const SeedPapersScatterplotContainer: React.FC = () => {
   const dispatch = useThunkDispatch();
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
+  console.log({ markedPapers })
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);

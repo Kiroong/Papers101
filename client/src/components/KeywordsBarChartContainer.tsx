@@ -14,10 +14,9 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
   const wordCounts = useMemo(() => {
     const count = {} as { [word: string]: number };
     seedPapers.forEach((entry) => {
-      extractKeywords(entry.title + " " + entry.abstract)
-        .forEach((word) =>
-          count[word] ? (count[word] += 1) : (count[word] = 1)
-        );
+      extractKeywords(entry.title + " " + entry.abstract).forEach((word) =>
+        count[word] ? (count[word] += 1) : (count[word] = 1)
+      );
       entry.keywords.forEach((word) =>
         count[word] ? (count[word] += 1) : (count[word] = 1)
       );
@@ -33,7 +32,9 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
       .map(([word, count]) => ({
         word,
         count,
-        isSelected: userInputKeywords.includes(word),
+        isSelected: userInputKeywords
+          .map((keyword, index) => ({ keyword, index }))
+          .find(({keyword, index}) => keyword.split(" ").includes(word))
       }));
   }, [userInputKeywords, seedPapers]);
   console.log({ wordCounts });

@@ -27,7 +27,7 @@ const KeywordsBarChart = ({
             fill={
               isSelected
                 ? d3.schemeTableau10[
-                    Math.min(9, userInputKeywords.indexOf(word))
+                    Math.min(9, isSelected.index)
                   ]
                 : defaultColor
             }

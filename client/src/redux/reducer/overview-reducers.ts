@@ -42,10 +42,11 @@ function updateSortedPaperEntries(
     let newEntry = { ...entry };
     if (updateKeywordSims) {
       const keywordSims = state.keywords.map(
-        (keyword) =>
+        keyword => keyword.split(' ').map(word => (
           (entry.title + entry.abstract)
             .toLowerCase()
-            .split(keyword.toLowerCase()).length - 1
+            .split(word.toLowerCase()).length - 1
+        )).reduce((a, b) => a + b)
       );
       newEntry = { ...newEntry, keywordSims };
     }
