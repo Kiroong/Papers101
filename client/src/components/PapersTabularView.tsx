@@ -23,7 +23,7 @@ const PapersTabularView: React.FC = () => {
     ...state.overview.histories,
     state.overview,
   ]);
-  const numHistories = Math.min(2, histories.length - 1);
+  const numHistories = Math.min(5, histories.length - 1);
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
   const paperEntries = useRootSelector((state) =>
