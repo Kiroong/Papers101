@@ -23,7 +23,7 @@ const PapersTabularView: React.FC = () => {
     ...state.overview.histories,
     state.overview,
   ]);
-  const numHistories = Math.min(5, histories.length - 1);
+  const numHistories = 5;
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
   const paperEntries = useRootSelector((state) =>
@@ -75,6 +75,10 @@ const PapersTabularView: React.FC = () => {
           {Array(numHistories)
             .fill(0)
             .map((_, i) => {
+              const width = 35;
+              if (histories.length - 1 < numHistories - i) {
+                return <div style={{ width }} />
+              }
               const historyBefore = histories.slice(
                 -(numHistories - 1 - i + 2)
               )[0];
@@ -106,6 +110,7 @@ const PapersTabularView: React.FC = () => {
                   }}
                   offsetHeight={40}
                   cellHeight={20}
+                  svgWidth={width}
                 />
               );
             })}

@@ -9,6 +9,7 @@ interface Props {
     markedEntries: PaperEntry[]
     setMarkedEntries: (entry: PaperEntry[]) => any
     offsetHeight: number
+    svgWidth: number
     cellHeight: number
     onSelect: () => any
 }
@@ -29,12 +30,12 @@ const HistoryLink: React.FC<Props> = ({
     toEntries,
     markedEntries,
     setMarkedEntries,
+    svgWidth,
     offsetHeight,
     cellHeight,
     onSelect,
 }) => {
     const svgHeight: number = cellHeight * 100
-    const svgWidth: number = 200
     const root = useRef<HTMLDivElement>(null)
     let selectHistory = () => {
       onSelect()
@@ -232,7 +233,7 @@ const HistoryLink: React.FC<Props> = ({
                 className={'history-header'}
                 style={{ width: svgWidth, height: offsetHeight }}
             >
-                <button onClick={selectHistory}>Restore</button>
+                <button onClick={selectHistory}>R</button>
             </div>
             <svg height={svgHeight} width={svgWidth}>
                 <g
