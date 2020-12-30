@@ -58,9 +58,10 @@ const HistoryLink: React.FC<Props> = ({
             setMarkedEntries(markedEntries.concat([entry]))
         }
     }
-
+    /*
     let handleCellMouseover = (event: any, d: any) => {
         let _root = d3.select(root.current).select('svg').select('.history')
+        
         _root
             .selectAll('.cell-history')
             .filter((dd: any) => dd.doi === d.doi)
@@ -75,16 +76,17 @@ const HistoryLink: React.FC<Props> = ({
             .attr('stroke', 'green')
             .raise()
     }
-
+    */
     let handleLinkMouseover = (event: any, d: any) => {
         let _root = d3.select(root.current).select('svg').select('.history')
+        /*
         _root
             .selectAll('.cell-history')
             .filter((dd: any) => dd.doi === d.toDoi)
             .classed('hovered', true)
             .attr('fill', 'green')
             .raise()
-
+        */
         _root
             .selectAll('.line-history')
             .filter((dd: any) => dd.toDoi === d.toDoi)
@@ -95,12 +97,13 @@ const HistoryLink: React.FC<Props> = ({
 
     let handleMouseout = (event: any, d: any) => {
         let _root = d3.select(root.current).select('svg').select('.history')
+        /*
         _root
             .selectAll('.cell-history')
             .selectAll('.hovered')
             .classed('hovered', false)
             .attr('fill', 'white')
-
+        */
         _root
             .selectAll('.line-history')
             .selectAll('.hovered')
@@ -109,9 +112,26 @@ const HistoryLink: React.FC<Props> = ({
     }
 
     useEffect(() => {
+        // Init
+
+        let _root = d3.select(root.current).select('svg').select('.history')
+        _root
+            .append('line')
+            .classed('pillar', true)
+            .attr('x1', 0)
+            .attr('y1', 0)
+            .attr('x2', 0)
+            .attr('y2', svgHeight)
+            .style('stroke', 'black')
+            .style('stroke-width', 5)
+
+    }, [])
+
+    useEffect(() => {
         console.log('cell')
         let _root = d3.select(root.current).select('svg').select('.history')
 
+        /*
         _root
             .selectAll('.cell-history')
             .data(fromEntries)
@@ -131,6 +151,7 @@ const HistoryLink: React.FC<Props> = ({
             .on('click', (e, d) => handleCellClick(e, d))
         //.on('mouseover', (e, d) => handleCellMouseover(e, d))
         //.on('mouseout', (e, d) => handleMouseout(e, d))
+        */
     }, [fromEntries])
 
     useEffect(() => {
@@ -152,7 +173,7 @@ const HistoryLink: React.FC<Props> = ({
             .join('line')
             .classed('line-history', true)
             .attr('x1', (d: HistoryLine) =>
-                d.fromIndex >= 0 ? svgWidth / 4 : svgWidth * (0.99)
+                d.fromIndex >= 0 ? 0 : svgWidth * (0.95)
             )
             .attr('y1', (d: HistoryLine) =>
                 d.fromIndex >= 0
@@ -161,18 +182,20 @@ const HistoryLink: React.FC<Props> = ({
             )
             .attr('x2', svgWidth)
             .attr('y2', (d: HistoryLine) => (d.toIndex + 0.5) * cellHeight)
-            .attr('stroke', (d) =>
-                markedEntries.map((me) => me.doi).includes(d.toDoi)
-                    ? 'red'
-                    : 'black'
-            )
-            .attr('stroke-width', cellHeight * 0.6)
+            .attr('stroke', (d) => {
+                if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
+                    return d3.schemeSet1[3];
+                }
+                else if(d.fromIndex > d.toIndex) {
+                    return d3.schemeSet1[0]
+                }
+                else {
+                    return d3.schemeSet1[8];
+                }
+            })
+            .attr('stroke-width', 3)//cellHeight * 0.6)
             .attr('stroke-linecap', 'round')
-            .attr('opacity', (d) =>
-            markedEntries.map((me) => me.doi).includes(d.toDoi)
-                ? 0.5
-                : 0.2
-        )
+            .attr('opacity', (d) => 0.5)
             .on('click', (e, d) => handleLinkClick(e, d))
         //.on('mouseover', (e, d) => handleLinkMouseover(e, d))
         //.on('mouseout', (e, d) => handleMouseout(e, d))
@@ -223,32 +246,3 @@ const HistoryLink: React.FC<Props> = ({
 }
 
 export default HistoryLink
-
-/*
-
- {fromEntries.map((fe, fi) => (
-                        <rect
-                            className={'cell-history'}
-                            width={svgWidth / 4}
-                            height={cellHeight}
-                            x={0}
-                            y={cellHeight * fi}
-                            fill={'white'}
-                            stroke={'black'}
-                            stroke-width={1}
-                        />
-                    ))}
-
-                    {toEntries.map((te, ti) => (
-                        <line
-                            className={'line-history'}
-                            x1={svgWidth}
-                            y1={(ti+0.5)*cellHeight}
-                            x2={svgWidth/4}
-                            y2={(matchToFrom(te.doi)+0.5)*cellHeight}
-                            stroke={'black'}
-                            stroke-width={cellHeight*0.8}
-                            opacity={0.3}
-                        />
-                    ))}
-*/
