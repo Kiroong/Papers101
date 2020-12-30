@@ -13,6 +13,9 @@ const defaultOverviewState: OverviewState = {
   histories: [],
   seedPaperSimsCache: {},
   weights: {
+    recentlyPublished: {
+      maxVal: 0.5,
+    },
     keywordSimilarity: {
       maxVal: 1,
       components: [],
@@ -92,6 +95,9 @@ function updateSortedPaperEntries(
     return newEntry;
   });
 
+  const recentlyPublishedMax = updated
+    .map((entry) => entry.recentlyPublished)
+    .reduce((a, b) => Math.max(a, b), 0);
   const keywordSimsMaxOfSum = maxOfSum(
     updated.map((entry) => entry.keywordSims)
   );
@@ -108,6 +114,7 @@ function updateSortedPaperEntries(
 
   const normalized = updated.map((entry) => ({
     ...entry,
+    recentlyPublished: entry.recentlyPublished / recentlyPublishedMax,
     keywordSims: entry.keywordSims.map((sim) => sim / keywordSimsMaxOfSum),
     seedPaperSims: entry.seedPaperSims.map(
       (sim) => sim / seedPaperSimsMaxOfSum
@@ -126,6 +133,7 @@ function updateSortedPaperEntries(
   const withScore = normalized.map((entry) => ({
     ...entry,
     score:
+      entry.recentlyPublished * state.weights.recentlyPublished.maxVal +
       inner(
         entry.keywordSims,
         state.weights.keywordSimilarity.components.map(
@@ -170,6 +178,7 @@ export const overviewReducer = (
     case getType(actionOverview.getData.complete):
       const paperEntries = action.payload.map((entry) => ({
         ...entry,
+        recentlyPublished: Math.min(10, entry.year - 2010),
         referencedBy: entry.referenced_by,
         numReferencing: entry.referencing.length,
         numReferenced: entry.referenced_by.length,

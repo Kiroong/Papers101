@@ -117,7 +117,7 @@ const SearchBox: React.FC = () => {
                     width: 20,
                     minWidth: 20,
                     height: 20,
-                    backgroundColor: d3.schemeTableau10[Math.min(i, 9)],
+                    backgroundColor: d3.schemePurples[9].slice(3)[Math.min(i, 6)],
                   }}
                 />
                 <Text size="small">{item.title}</Text>

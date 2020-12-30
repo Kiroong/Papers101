@@ -11,6 +11,7 @@ export interface PaperEntry {
   numReferenced: number;
   numReferencing: number;
   // ============= //
+  recentlyPublished: number;
   keywordSims: number[];
   seedPaperSims: number[];
   referencedBySeedPapers: number[];
@@ -20,6 +21,9 @@ export interface PaperEntry {
 }
 
 export interface Weights {
+  recentlyPublished: {
+    maxVal: number;
+  };
   keywordSimilarity: {
     maxVal: number;
     components: { keyword: string; weight: number }[];

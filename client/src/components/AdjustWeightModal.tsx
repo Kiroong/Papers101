@@ -16,6 +16,21 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
   return (
     <Box direction="column" pad="medium">
       <Grid columns={["1fr", "1fr"]} gap="small">
+        <div>Recently Published</div>
+        <input
+          type="number"
+          value={weights.recentlyPublished.maxVal}
+          onChange={(e) =>
+            setWeights({
+              ...weights,
+              recentlyPublished: {
+                ...weights.recentlyPublished,
+                maxVal: +e.target.value,
+              },
+            })
+          }
+        />
+
         <div>Keyword Similarities</div>
         <input
           type="number"

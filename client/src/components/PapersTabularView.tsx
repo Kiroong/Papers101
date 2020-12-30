@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import {
   Box,
   Button,
@@ -36,6 +37,7 @@ const PapersTabularView: React.FC = () => {
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
+  const weightsHash = `${weights.recentlyPublished.maxVal}:${weights.keywordSimilarity.maxVal}:${weights.seedPaperSimilarity.maxVal}:${weights.referencedBySeedPapers.maxVal}:${weights.referencesSeedPapers.maxVal}`;
 
   const hoveredEntry = useRootSelector((state) => state.hoveredEntry);
   const setHoveredEntry = (entry: PaperEntry) => {
@@ -118,7 +120,7 @@ const PapersTabularView: React.FC = () => {
                   onSelect={() => {
                     dispatch(actionOverview.selectHistory(historyBefore));
                   }}
-                  offsetHeight={40}
+                  offsetHeight={50}
                   cellHeight={20}
                   svgWidth={width}
                   hoveredEntry={hoveredEntry}
@@ -128,28 +130,26 @@ const PapersTabularView: React.FC = () => {
             })}
           <div>
             <Grid
-              rows={["40px", ...paperEntries.map((_) => "20px")]}
+              rows={["50px", ...paperEntries.map((_) => "20px")]}
               columns={[
                 "auto",
                 "4fr",
-                "1fr",
-                "1fr",
-                "1fr",
-                "1fr",
-                "1fr",
-                "1fr",
-                "1fr",
+                "auto",
+                `${weights.recentlyPublished.maxVal}fr`,
+                `${weights.keywordSimilarity.maxVal}fr`,
+                `${weights.seedPaperSimilarity.maxVal}fr`,
+                `${weights.referencedBySeedPapers.maxVal}fr`,
+                `${weights.referencesSeedPapers.maxVal}fr`,
               ]}
             >
               <div></div>
-              <div>Title</div>
-              <div>Year</div>
-              <div># References</div>
-              <div># Referenced</div>
-              <div>Keyword Similarity</div>
-              <div>Seed Paper Similarity</div>
-              <div>Referenced by Seed Papers</div>
-              <div>References Seed Papers</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5 }}>Year</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Recently Published</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Keyword Similarity</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Seed Paper Similarity</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Referenced by Seed Papers</div>
+              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>References Seed Papers</div>
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
@@ -159,6 +159,8 @@ const PapersTabularView: React.FC = () => {
                       pad={{ horizontal: "small" }}
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
                             ? "rgba(0,0,255,0.1)"
@@ -192,6 +194,8 @@ const PapersTabularView: React.FC = () => {
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
                             ? "rgba(0,0,255,0.1)"
@@ -203,28 +207,8 @@ const PapersTabularView: React.FC = () => {
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      {entry.numReferencing}
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      style={{
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      {entry.numReferenced}
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
                             ? "rgba(0,0,255,0.1)"
@@ -232,13 +216,35 @@ const PapersTabularView: React.FC = () => {
                       }}
                     >
                       <SimilaritiesBar
+                        key={weightsHash}
+                        similarities={[entry.recentlyPublished]}
+                        maxOfSum={1}
+                        color={[d3.schemeGreys[3][1]]}
+                      />
+                    </div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
+                      <SimilaritiesBar
+                        key={weightsHash}
                         similarities={entry.keywordSims}
                         maxOfSum={1}
+                        color={d3.schemeTableau10}
                       />
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
                             ? "rgba(0,0,255,0.1)"
@@ -246,13 +252,17 @@ const PapersTabularView: React.FC = () => {
                       }}
                     >
                       <SimilaritiesBar
+                        key={weightsHash}
                         similarities={entry.seedPaperSims}
                         maxOfSum={1}
+                        color={d3.schemePurples[9].slice(3)}
                       />
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
                             ? "rgba(0,0,255,0.1)"
@@ -260,13 +270,17 @@ const PapersTabularView: React.FC = () => {
                       }}
                     >
                       <SimilaritiesBar
+                        key={weightsHash}
                         similarities={entry.referencedBySeedPapers}
                         maxOfSum={1}
+                        color={d3.schemePurples[9].slice(3)}
                       />
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
                             ? "rgba(0,0,255,0.1)"
@@ -274,8 +288,10 @@ const PapersTabularView: React.FC = () => {
                       }}
                     >
                       <SimilaritiesBar
+                        key={weightsHash}
                         similarities={entry.referencesSeedPapers}
                         maxOfSum={1}
+                        color={d3.schemePurples[9].slice(3)}
                       />
                     </div>
                   </>
