@@ -11,6 +11,8 @@ interface Props {
     cellHeight: number
     onSelect: () => any
     topKDois: string[];
+    hoveredEntry: PaperEntry | null;
+    setHoveredEntry: (entry: PaperEntry) => any;
 }
 
 interface HistoryLine {
@@ -32,6 +34,8 @@ const HistoryLink: React.FC<Props> = ({
     cellHeight,
     onSelect,
     topKDois,
+    hoveredEntry,
+    setHoveredEntry,
 }) => {
     const svgHeight: number = cellHeight * 100
     const root = useRef<HTMLDivElement>(null)

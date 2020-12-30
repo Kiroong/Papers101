@@ -3,17 +3,21 @@ import React, { useState } from "react";
 import { PaperEntry } from "../redux/state/overview";
 
 interface Props {
+  onMouseOver: any;
+  style: any;
   entry: PaperEntry;
 }
 
-const TitleBox: React.FC<Props> = ({ entry }) => {
+const TitleBox: React.FC<Props> = ({ entry, onMouseOver, style }) => {
   const [show, setShow] = useState(false);
   return (
     <div
+      onMouseOver={onMouseOver}
       onClick={() => {
         setShow(true);
       }}
       style={{
+        ...style,
         textOverflow: "ellipsis",
         overflow: "hidden",
       }}

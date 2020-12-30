@@ -10,7 +10,10 @@ import {
 } from "grommet";
 import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
-import { useThunkDispatch } from "../redux/action/root-action";
+import {
+  setHoveredEntry as _setHoveredEntry,
+  useThunkDispatch,
+} from "../redux/action/root-action";
 import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
 import AdjustWeightModal from "./AdjustWeightModal";
@@ -33,8 +36,13 @@ const PapersTabularView: React.FC = () => {
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
-  const setMarkedPapers = (newMarked: PaperEntry[]) =>
-    dispatch(actionOverview.setMarkedPapers(newMarked));
+
+  const hoveredEntry = useRootSelector((state) => state.hoveredEntry);
+  const setHoveredEntry = (entry: PaperEntry) => {
+    if (hoveredEntry?.doi !== entry.doi) {
+      dispatch(_setHoveredEntry(entry));
+    }
+  };
 
   const dispatch = useThunkDispatch();
   const [showWeightModal, setShowWeightModal] = useState(false);
@@ -77,7 +85,7 @@ const PapersTabularView: React.FC = () => {
             .map((_, i) => {
               const width = 35;
               if (histories.length - 1 < numHistories - i) {
-                return <div style={{ width }} />
+                return <div style={{ width }} />;
               }
               const historyBefore = histories.slice(
                 -(numHistories - 1 - i + 2)
@@ -86,7 +94,10 @@ const PapersTabularView: React.FC = () => {
                 -(numHistories - 1 - i + 1)
               )[0];
 
-              const lastRight = histories.slice(-1)[0].paperEntries.slice(0, 50).map(p => p.doi);
+              const lastRight = histories
+                .slice(-1)[0]
+                .paperEntries.slice(0, 50)
+                .map((p) => p.doi);
               const topK = lastRight.slice(0, 5);
 
               return (
@@ -114,6 +125,8 @@ const PapersTabularView: React.FC = () => {
                   offsetHeight={40}
                   cellHeight={20}
                   svgWidth={width}
+                  hoveredEntry={hoveredEntry}
+                  setHoveredEntry={setHoveredEntry}
                 />
               );
             })}
@@ -149,6 +162,13 @@ const PapersTabularView: React.FC = () => {
                       align="baseline"
                       gap="small"
                       margin={{ horizontal: "small" }}
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
                     >
                       <Button
                         onClick={() => {
@@ -164,31 +184,100 @@ const PapersTabularView: React.FC = () => {
                       >
                         SEED
                       </Button>
-                      
                     </Box>
-                    <TitleBox entry={entry} />
-                    <div>{entry.year}</div>
-                    <div>{entry.numReferencing}</div>
-                    <div>{entry.numReferenced}</div>
-                    <div>
+                    <TitleBox
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                      entry={entry} />
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
+                      {entry.year}
+                    </div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
+                      {entry.numReferencing}
+                    </div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
+                      {entry.numReferenced}
+                    </div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
                       <SimilaritiesBar
                         similarities={entry.keywordSims}
                         maxOfSum={1}
                       />
                     </div>
-                    <div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
                       <SimilaritiesBar
                         similarities={entry.seedPaperSims}
                         maxOfSum={1}
                       />
                     </div>
-                    <div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
                       <SimilaritiesBar
                         similarities={entry.referencedBySeedPapers}
                         maxOfSum={1}
                       />
                     </div>
-                    <div>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      style={{
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
                       <SimilaritiesBar
                         similarities={entry.referencesSeedPapers}
                         maxOfSum={1}
