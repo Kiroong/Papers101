@@ -169,8 +169,6 @@ const HistoryLink: React.FC<Props> = ({
             .attr('opacity', (d) => {
                 if (topKDois.includes(d.toDoi)) {
                     return 0.7
-                } else if (d.fromIndex > d.toIndex) {
-                    return 0.5
                 } else {
                     return 0.1
                 }
