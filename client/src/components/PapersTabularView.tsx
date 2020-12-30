@@ -156,8 +156,7 @@ const PapersTabularView: React.FC = () => {
                     <Box
                       direction="row"
                       align="baseline"
-                      gap="small"
-                      margin={{ horizontal: "small" }}
+                      pad={{ horizontal: "small" }}
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
                         backgroundColor:
