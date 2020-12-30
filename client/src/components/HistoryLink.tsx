@@ -6,12 +6,11 @@ import * as d3 from 'd3'
 interface Props {
     fromEntries: PaperEntry[]
     toEntries: PaperEntry[]
-    markedEntries: PaperEntry[]
-    setMarkedEntries: (entry: PaperEntry[]) => any
     offsetHeight: number
     svgWidth: number
     cellHeight: number
     onSelect: () => any
+    topKDois: string[];
 }
 
 interface HistoryLine {
@@ -28,12 +27,11 @@ function translate(x: number, y: number) {
 const HistoryLink: React.FC<Props> = ({
     fromEntries,
     toEntries,
-    markedEntries,
-    setMarkedEntries,
     svgWidth,
     offsetHeight,
     cellHeight,
     onSelect,
+    topKDois,
 }) => {
     const svgHeight: number = cellHeight * 100
     const root = useRef<HTMLDivElement>(null)
@@ -42,22 +40,22 @@ const HistoryLink: React.FC<Props> = ({
     }
 
     let handleCellClick = (event: any, d: any) => {
-        if (markedEntries.map((me) => me.doi).includes(d.doi)) {
-            setMarkedEntries(markedEntries.filter((me) => d.doi !== me.doi))
-        } else {
-            setMarkedEntries(markedEntries.concat([d]))
-        }
+        // if (markedEntries.map((me) => me.doi).includes(d.doi)) {
+        //     setMarkedEntries(markedEntries.filter((me) => d.doi !== me.doi))
+        // } else {
+        //     setMarkedEntries(markedEntries.concat([d]))
+        // }
     }
 
     let handleLinkClick = (event: any, d: any) => {
-        const entry: PaperEntry = toEntries.filter(
-            (te) => te.doi === d.toDoi
-        )[0]
-        if (markedEntries.map((me) => me.doi).includes(entry.doi)) {
-            setMarkedEntries(markedEntries.filter((me) => entry.doi !== me.doi))
-        } else {
-            setMarkedEntries(markedEntries.concat([entry]))
-        }
+        // const entry: PaperEntry = toEntries.filter(
+        //     (te) => te.doi === d.toDoi
+        // )[0]
+        // if (markedEntries.map((me) => me.doi).includes(entry.doi)) {
+        //     setMarkedEntries(markedEntries.filter((me) => entry.doi !== me.doi))
+        // } else {
+        //     setMarkedEntries(markedEntries.concat([entry]))
+        // }
     }
     /*
     let handleCellMouseover = (event: any, d: any) => {
@@ -184,7 +182,8 @@ const HistoryLink: React.FC<Props> = ({
             .attr('x2', svgWidth)
             .attr('y2', (d: HistoryLine) => (d.toIndex + 0.5) * cellHeight)
             .attr('stroke', (d) => {
-                if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
+                if(false) {
+                // if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
                     return d3.schemeSet1[3];
                 }
                 else if(d.fromIndex > d.toIndex) {

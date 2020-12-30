@@ -29,7 +29,7 @@ const PapersTabularView: React.FC = () => {
   const paperEntries = useRootSelector((state) =>
     state.overview.paperEntries
       .filter((entry) => !seedPapers.map((e) => e.doi).includes(entry.doi))
-      .slice(0, 100)
+      .slice(0, 50)
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
@@ -85,6 +85,10 @@ const PapersTabularView: React.FC = () => {
               const historyAfter = histories.slice(
                 -(numHistories - 1 - i + 1)
               )[0];
+
+              const lastRight = histories.slice(-1)[0].paperEntries.slice(0, 50).map(p => p.doi);
+              const topK = lastRight.slice(0, 5);
+
               return (
                 <HistoryLink
                   fromEntries={historyBefore.paperEntries
@@ -94,7 +98,7 @@ const PapersTabularView: React.FC = () => {
                           .map((e) => e.doi)
                           .includes(entry.doi)
                     )
-                    .slice(0, 100)}
+                    .slice(0, 50)}
                   toEntries={historyAfter.paperEntries
                     .filter(
                       (entry) =>
@@ -102,9 +106,8 @@ const PapersTabularView: React.FC = () => {
                           .map((e) => e.doi)
                           .includes(entry.doi)
                     )
-                    .slice(0, 100)}
-                  markedEntries={markedPapers}
-                  setMarkedEntries={setMarkedPapers}
+                    .slice(0, 50)}
+                  topKDois={topK}
                   onSelect={() => {
                     dispatch(actionOverview.selectHistory(historyBefore));
                   }}
@@ -161,35 +164,7 @@ const PapersTabularView: React.FC = () => {
                       >
                         SEED
                       </Button>
-                      <Button
-                        style={{
-                          backgroundColor: markedPapers
-                            .map((p) => p.doi)
-                            .includes(entry.doi)
-                            ? "purple"
-                            : "white",
-                        }}
-                        onClick={() => {
-                          if (
-                            markedPapers.map((p) => p.doi).includes(entry.doi)
-                          ) {
-                            dispatch(
-                              actionOverview.setMarkedPapers(
-                                markedPapers.filter((p) => p.doi !== entry.doi)
-                              )
-                            );
-                          } else {
-                            dispatch(
-                              actionOverview.setMarkedPapers([
-                                ...markedPapers,
-                                entry,
-                              ])
-                            );
-                          }
-                        }}
-                      >
-                        MARK
-                      </Button>
+                      
                     </Box>
                     <TitleBox entry={entry} />
                     <div>{entry.year}</div>
