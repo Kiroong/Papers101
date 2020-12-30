@@ -99,6 +99,7 @@ let HistoryLink: React.FC<Props> = ({
 
     useEffect(() => {
         // Init
+        /*
         let _root = d3.select(root.current).select('svg').select('.history')
         _root
             .append('line')
@@ -109,6 +110,7 @@ let HistoryLink: React.FC<Props> = ({
             .attr('y2', svgHeight)
             .style('stroke', 'black')
             .style('stroke-width', 5)
+    */
 
     }, [])
 
@@ -127,14 +129,39 @@ let HistoryLink: React.FC<Props> = ({
         })
 
         // 기존에 존재하는 history를 과거에 묻기
+
+
         _root
             .selectAll('.next')
             .classed('next', false)
             .classed('prev', true)
 
+
+
         // 새로운 히스토리 우측 안보이는곳에 생성하기
+
         _root
-            .selectAll('.next')
+            .selectAll('.node')
+            .data(fromEntries.map(d => d.doi))
+            .join('circle')
+            .classed('node', true)
+            .classed('next', true)
+            .attr('cx', svgWidth + 3)
+            .attr('cy', (d: string, i: number) => {
+                return (i + 0.5) * cellHeight
+            })
+            .attr('r', 3)
+            .attr('opacity', (d) => {
+                if(topKDois.includes(d)) {
+                    return 0.7;
+                }
+                else {
+                    return 0.1;
+                }
+            })
+
+        _root
+            .selectAll('.parallel')
             .data(_lineData)
             .join('line')
             .classed('next', true)
@@ -162,7 +189,7 @@ let HistoryLink: React.FC<Props> = ({
             .attr('stroke-linecap', 'round')
             .attr('opacity', (d) => {
                 if(topKDois.includes(d.toDoi)) {
-                    return 0.5;
+                    return 0.7;
                 }
                 else if(d.fromIndex > d.toIndex) {
                     return 0.5
@@ -176,13 +203,15 @@ let HistoryLink: React.FC<Props> = ({
         // 애니메이션으로 옮기기
 
         _root
-            .selectAll('.parallel')
+            .selectAll('.next')
             .transition()
             .duration(1000)
             .attr('transform', translate(-svgWidth, 0))
-            
         _root
             .selectAll('.prev')
+            .transition()
+            .duration(1000)
+            .attr('transform', translate(-2*svgWidth, 0))
             .remove()
         
         setPrevEntries(toEntries);
