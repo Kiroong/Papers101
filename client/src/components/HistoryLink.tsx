@@ -128,33 +128,6 @@ const HistoryLink: React.FC<Props> = ({
     }, [])
 
     useEffect(() => {
-        console.log('cell')
-        let _root = d3.select(root.current).select('svg').select('.history')
-
-        /*
-        _root
-            .selectAll('.cell-history')
-            .data(fromEntries)
-            .join('rect')
-            .classed('cell-history', true)
-            .attr('x', 0)
-            .attr('y', (d, i) => i * cellHeight)
-            .attr('height', cellHeight*0.8)
-            .attr('width', svgWidth / 4)
-            .attr('stroke', 'black')
-            .attr('stroke-width', 1)
-            .attr('fill', (d: PaperEntry) => 
-              markedEntries.map((me) => me.doi).includes(d.doi)
-                    ? 'red'
-                    : 'white'
-            )
-            .on('click', (e, d) => handleCellClick(e, d))
-        //.on('mouseover', (e, d) => handleCellMouseover(e, d))
-        //.on('mouseout', (e, d) => handleMouseout(e, d))
-        */
-    }, [fromEntries])
-
-    useEffect(() => {
         let _root = d3.select(root.current).select('svg').select('.history')
         let _lineData: HistoryLine[] = []
         toEntries.forEach((te, ti) => {
@@ -167,20 +140,28 @@ const HistoryLink: React.FC<Props> = ({
             })
         })
 
+        // 기존에 존재하는 history를 과거에 묻기
+        _root
+            .selectAll('.line-history')
+            .classed('line-history', false)
+            .classed('line-previous', true)
+
+        // 새로운 히스토리 우측 안보이는곳에 생성하기
         _root
             .selectAll('.line-history')
             .data(_lineData)
             .join('line')
             .classed('line-history', true)
             .attr('x1', (d: HistoryLine) =>
-                d.fromIndex >= 0 ? 0 : svgWidth * (0.95)
+                d.fromIndex >= 0 ? svgWidth : svgWidth * (0.95) + svgWidth
+                //d.fromIndex >= 0 ? 0 : svgWidth * (0.95)
             )
             .attr('y1', (d: HistoryLine) =>
                 d.fromIndex >= 0
                     ? (d.fromIndex + 0.5) * cellHeight
                     : (d.toIndex + 0.5) * cellHeight
             )
-            .attr('x2', svgWidth)
+            .attr('x2', 2*svgWidth)
             .attr('y2', (d: HistoryLine) => (d.toIndex + 0.5) * cellHeight)
             .attr('stroke', (d) => {
                 if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
@@ -195,8 +176,34 @@ const HistoryLink: React.FC<Props> = ({
             })
             .attr('stroke-width', 3)//cellHeight * 0.6)
             .attr('stroke-linecap', 'round')
-            .attr('opacity', (d) => 0.5)
+            .attr('opacity', (d) => {
+                if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
+                    return 0.5;
+                }
+                else if(d.fromIndex > d.toIndex) {
+                    return 0.5
+                }
+                else {
+                    return 0.1;
+                }
+            })
+            .attr('trasform', translate(svgWidth, 0))
             .on('click', (e, d) => handleLinkClick(e, d))
+
+        
+        // 애니메이션으로 옮기기
+
+        _root
+            .selectAll('line')
+            .transition()
+            .duration(1000)
+            .attr('transform', translate(-svgWidth, 0))
+            
+        _root
+            .selectAll('.line-previous')
+            .transition()
+            .remove()
+        
         //.on('mouseover', (e, d) => handleLinkMouseover(e, d))
         //.on('mouseout', (e, d) => handleMouseout(e, d))
     }, [toEntries])
