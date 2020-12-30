@@ -26,7 +26,7 @@ function translate(x: number, y: number) {
     return `translate(${x}, ${y})`
 }
 
-const HistoryLink: React.FC<Props> = ({
+let HistoryLink: React.FC<Props> = ({
     fromEntries,
     toEntries,
     svgWidth,
@@ -37,49 +37,32 @@ const HistoryLink: React.FC<Props> = ({
     hoveredEntry,
     setHoveredEntry,
 }) => {
-    const svgHeight: number = cellHeight * 100
+    const svgHeight: number = cellHeight * 50;
+    const [prevEntries, setPrevEntries] = useState<PaperEntry[]>([]);
     const root = useRef<HTMLDivElement>(null)
+
     let selectHistory = () => {
       onSelect()
     }
 
-    let handleCellClick = (event: any, d: any) => {
-        // if (markedEntries.map((me) => me.doi).includes(d.doi)) {
-        //     setMarkedEntries(markedEntries.filter((me) => d.doi !== me.doi))
-        // } else {
-        //     setMarkedEntries(markedEntries.concat([d]))
-        // }
+    let isEntriesEqual = (newEntries: PaperEntry[]): boolean => {
+        let prevDois: string[] = prevEntries.map(d => d.doi);
+        let nextDois: string[] = newEntries.map(d => d.doi);
+        if(prevEntries.length === 0) {
+            return true
+        }
+        if(prevDois.length != nextDois.length) {
+            return true;
+        }
+
+        for(let i in prevDois) {
+            if(prevDois[i] !== nextDois[i]) {
+                return true
+            }
+        }
+        return false;
     }
 
-    let handleLinkClick = (event: any, d: any) => {
-        // const entry: PaperEntry = toEntries.filter(
-        //     (te) => te.doi === d.toDoi
-        // )[0]
-        // if (markedEntries.map((me) => me.doi).includes(entry.doi)) {
-        //     setMarkedEntries(markedEntries.filter((me) => entry.doi !== me.doi))
-        // } else {
-        //     setMarkedEntries(markedEntries.concat([entry]))
-        // }
-    }
-    /*
-    let handleCellMouseover = (event: any, d: any) => {
-        let _root = d3.select(root.current).select('svg').select('.history')
-        
-        _root
-            .selectAll('.cell-history')
-            .filter((dd: any) => dd.doi === d.doi)
-            .classed('hovered', true)
-            .attr('fill', 'green')
-            .raise()
-
-        _root
-            .selectAll('.line-history')
-            .filter((dd: any) => dd.toDoi === d.doi)
-            .classed('hovered', true)
-            .attr('stroke', 'green')
-            .raise()
-    }
-    */
     let handleLinkMouseover = (event: any, d: any) => {
         let _root = d3.select(root.current).select('svg').select('.history')
         /*
@@ -116,7 +99,6 @@ const HistoryLink: React.FC<Props> = ({
 
     useEffect(() => {
         // Init
-
         let _root = d3.select(root.current).select('svg').select('.history')
         _root
             .append('line')
@@ -130,7 +112,8 @@ const HistoryLink: React.FC<Props> = ({
 
     }, [])
 
-    useEffect(() => {
+    let updateComponent = () => {
+        console.log('update')
         let _root = d3.select(root.current).select('svg').select('.history')
         let _lineData: HistoryLine[] = []
         toEntries.forEach((te, ti) => {
@@ -145,16 +128,17 @@ const HistoryLink: React.FC<Props> = ({
 
         // 기존에 존재하는 history를 과거에 묻기
         _root
-            .selectAll('.line-history')
-            .classed('line-history', false)
-            .classed('line-previous', true)
+            .selectAll('.next')
+            .classed('next', false)
+            .classed('prev', true)
 
         // 새로운 히스토리 우측 안보이는곳에 생성하기
         _root
-            .selectAll('.line-history')
+            .selectAll('.next')
             .data(_lineData)
             .join('line')
-            .classed('line-history', true)
+            .classed('next', true)
+            .classed('parallel', true)
             .attr('x1', (d: HistoryLine) =>
                 d.fromIndex >= 0 ? svgWidth : svgWidth * (0.95) + svgWidth
                 //d.fromIndex >= 0 ? 0 : svgWidth * (0.95)
@@ -167,12 +151,8 @@ const HistoryLink: React.FC<Props> = ({
             .attr('x2', 2*svgWidth)
             .attr('y2', (d: HistoryLine) => (d.toIndex + 0.5) * cellHeight)
             .attr('stroke', (d) => {
-                if(false) {
-                // if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
+                if(topKDois.includes(d.toDoi)) {
                     return d3.schemeSet1[3];
-                }
-                else if(d.fromIndex > d.toIndex) {
-                    return d3.schemeSet1[0]
                 }
                 else {
                     return d3.schemeSet1[8];
@@ -181,7 +161,7 @@ const HistoryLink: React.FC<Props> = ({
             .attr('stroke-width', 3)//cellHeight * 0.6)
             .attr('stroke-linecap', 'round')
             .attr('opacity', (d) => {
-                if(markedEntries.map((me) => me.doi).includes(d.toDoi)) {
+                if(topKDois.includes(d.toDoi)) {
                     return 0.5;
                 }
                 else if(d.fromIndex > d.toIndex) {
@@ -191,26 +171,34 @@ const HistoryLink: React.FC<Props> = ({
                     return 0.1;
                 }
             })
-            .attr('trasform', translate(svgWidth, 0))
-            .on('click', (e, d) => handleLinkClick(e, d))
 
         
         // 애니메이션으로 옮기기
 
         _root
-            .selectAll('line')
+            .selectAll('.parallel')
             .transition()
             .duration(1000)
             .attr('transform', translate(-svgWidth, 0))
             
         _root
-            .selectAll('.line-previous')
-            .transition()
+            .selectAll('.prev')
             .remove()
         
+        setPrevEntries(toEntries);
         //.on('mouseover', (e, d) => handleLinkMouseover(e, d))
         //.on('mouseout', (e, d) => handleMouseout(e, d))
+    }
+
+    useEffect(() => {
+        if(isEntriesEqual(toEntries)) {
+            updateComponent();
+        }
     }, [toEntries])
+
+    useEffect(() => {
+        console.log('hover')
+    }, [hoveredEntry])
     /*
     useEffect(() => {
         let _root = d3.select(root.current).select('svg').select('.history')
@@ -248,7 +236,7 @@ const HistoryLink: React.FC<Props> = ({
             <svg height={svgHeight} width={svgWidth}>
                 <g
                     className={'history'}
-                    height={cellHeight * 100}
+                    height={svgHeight}
                     width={svgWidth}
                 ></g>
             </svg>
@@ -256,4 +244,5 @@ const HistoryLink: React.FC<Props> = ({
     )
 }
 
-export default HistoryLink
+const MemoizedHistoryLink = React.memo(HistoryLink);
+export default MemoizedHistoryLink;

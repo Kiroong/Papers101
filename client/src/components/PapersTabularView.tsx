@@ -17,7 +17,7 @@ import {
 import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
 import AdjustWeightModal from "./AdjustWeightModal";
-import HistoryLink from "./HistoryLink";
+import MemoizedHistoryLink from "./HistoryLink";
 import SimilaritiesBar from "./SimilaritiesBar";
 import TitleBox from "./TitleBox";
 
@@ -101,7 +101,7 @@ const PapersTabularView: React.FC = () => {
               const topK = lastRight.slice(0, 5);
 
               return (
-                <HistoryLink
+                <MemoizedHistoryLink
                   fromEntries={historyBefore.paperEntries
                     .filter(
                       (entry) =>
