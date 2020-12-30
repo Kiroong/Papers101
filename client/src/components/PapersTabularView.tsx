@@ -94,11 +94,7 @@ const PapersTabularView: React.FC = () => {
                 -(numHistories - 1 - i + 1)
               )[0];
 
-              const lastRight = histories
-                .slice(-1)[0]
-                .paperEntries.slice(0, 50)
-                .map((p) => p.doi);
-              const topK = lastRight.slice(0, 5);
+              const topK = paperEntries.slice(0, 5).map(d => d.doi);
 
               return (
                 <MemoizedHistoryLink
