@@ -41,12 +41,16 @@ function updateSortedPaperEntries(
     const seedPaperSimsCache = state.seedPaperSimsCache; // going to mutate it as it's cache
     let newEntry = { ...entry };
     if (updateKeywordSims) {
-      const keywordSims = state.keywords.map(
-        keyword => keyword.split(' ').map(word => (
-          (entry.title + entry.abstract)
-            .toLowerCase()
-            .split(word.toLowerCase()).length - 1
-        )).reduce((a, b) => a + b)
+      const keywordSims = state.keywords.map((keyword) =>
+        keyword
+          .split(" ")
+          .map(
+            (word) =>
+              (entry.title + entry.abstract)
+                .toLowerCase()
+                .split(word.toLowerCase()).length - 1
+          )
+          .reduce((a, b) => a + b)
       );
       newEntry = { ...newEntry, keywordSims };
     }
@@ -91,19 +95,16 @@ function updateSortedPaperEntries(
   const keywordSimsMaxOfSum = maxOfSum(
     updated.map((entry) => entry.keywordSims)
   );
-  const withoutSeedPapers = updated
-      .filter(
-        (entry) => !state.seedPapers.map((d) => d.doi).includes(entry.doi)
-      )
-  const seedPaperSimsMaxOfSum = maxOfSum(
-    withoutSeedPapers.map((entry) => entry.seedPaperSims)
+  const withoutSeedPapers = updated.filter(
+    (entry) => !state.seedPapers.map((d) => d.doi).includes(entry.doi)
   );
-  const referencedBySeedPapersMaxOfSum = maxOfSum(
-    withoutSeedPapers.map((entry) => entry.referencedBySeedPapers)
-  );
-  const referencesSeedPapersMaxOfSum = maxOfSum(
-    withoutSeedPapers.map((entry) => entry.referencesSeedPapers)
-  );
+  const seedPaperSimsMaxOfSum =
+    maxOfSum(withoutSeedPapers.map((entry) => entry.seedPaperSims)) || 1;
+  const referencedBySeedPapersMaxOfSum =
+    maxOfSum(withoutSeedPapers.map((entry) => entry.referencedBySeedPapers)) ||
+    1;
+  const referencesSeedPapersMaxOfSum =
+    maxOfSum(withoutSeedPapers.map((entry) => entry.referencesSeedPapers)) || 1;
 
   const normalized = updated.map((entry) => ({
     ...entry,
@@ -114,7 +115,7 @@ function updateSortedPaperEntries(
     referencedBySeedPapers: entry.referencedBySeedPapers.map(
       (sim) => sim / referencedBySeedPapersMaxOfSum
     ),
-    referencsySeedPapers: entry.referencesSeedPapers.map(
+    referencesSeedPapers: entry.referencesSeedPapers.map(
       (sim) => sim / referencesSeedPapersMaxOfSum
     ),
   }));
