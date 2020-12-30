@@ -37,7 +37,6 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
           .find(({keyword, index}) => keyword.split(" ").includes(word))
       }));
   }, [userInputKeywords, seedPapers]);
-  console.log({ wordCounts });
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   useLayoutEffect(() => {
@@ -56,7 +55,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
           userInputKeywords={userInputKeywords}
           wordCounts={wordCounts}
           onClick={(keyword: string) => {
-            if (userInputKeywords.includes(keyword)) {
+            if (userInputKeywords.includes(keyword.toLocaleLowerCase())) {
               dispatch(
                 actionOverview.setKeywords(
                   userInputKeywords.filter((k) => k !== keyword)

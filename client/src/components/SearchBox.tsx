@@ -43,7 +43,9 @@ const SearchBox: React.FC = () => {
         </Box>
         <Form
           onSubmit={() => {
-            dispatch(actionOverview.setKeywords([...keywords, currentKeyword]));
+            if (!keywords.includes(currentKeyword.toLocaleLowerCase())) {
+              dispatch(actionOverview.setKeywords([...keywords, currentKeyword]));
+            }
             setCurrentKeyword("");
           }}
         >
