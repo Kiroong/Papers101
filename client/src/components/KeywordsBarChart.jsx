@@ -8,7 +8,6 @@ const KeywordsBarChart = ({
   onClick,
 }) => {
   const maxCount = wordCounts.reduce((a, b) => Math.max(a, b.count), 0);
-  console.log({ maxCount });
   let defaultColor = "rgba(128, 128, 128, 0.3)"
   let barHeight = 25
   let padding = 5

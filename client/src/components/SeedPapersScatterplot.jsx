@@ -12,13 +12,8 @@ const SeedPapersScatterplot = ({
   yThreshold,
   onClick,
 }) => {
+  seedPapers = [];  // ignore seed papers
   const papers = [...seedPapers, ...markedPapers];
-  // console.log(svgHeight)
-  // console.log(seedPapers, markedPapers)
-  // console.log("THRESHOLD: ", xThreshold, yThreshold)
-  console.log(seedPapers.map((item) => item[xLabel]), seedPapers.map((item) => item[yLabel]))
-  console.log(markedPapers.map((item) => item[xLabel]), markedPapers.map((item) => item[yLabel]))
-
 
   let margin = { top: 10, bottom: 20, left: 40, right: 10 }
   let height = svgHeight - margin.top - margin.bottom
