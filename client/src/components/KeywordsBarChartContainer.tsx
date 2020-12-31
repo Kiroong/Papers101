@@ -46,6 +46,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
   });
   return (
     <div
+      className="styled-scroll"
       style={{ height: "100%", width: "100%", overflowY: "scroll" }}
       ref={container}
     >

@@ -14,7 +14,7 @@ function App() {
           Papers101
         </HeaderName>
       </Header>
-      <div style={{ height: "calc(100% - 48px)", marginTop: "48px" }}>
+      <div style={{ height: "100%", marginTop: "48px" }}>
         <Overview />
       </div>
     </div>

@@ -50,7 +50,7 @@ const PapersTabularView: React.FC = () => {
   const [showWeightModal, setShowWeightModal] = useState(false);
 
   return (
-    <Card fill={true} background="white" overflow={{ vertical: "scroll" }}>
+    <Card fill={true} background="white" overflow={{ vertical: "scroll" }} className="styled-scroll">
       <CardHeader pad="small">
         <Box direction="row" gap="small" align="baseline">
           <Heading level="4">Papers</Heading>
