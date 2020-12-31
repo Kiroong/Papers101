@@ -1,4 +1,5 @@
-import * as d3 from 'd3';
+import * as Icons from "grommet-icons";
+import * as d3 from "d3";
 import {
   Box,
   Button,
@@ -50,7 +51,12 @@ const PapersTabularView: React.FC = () => {
   const [showWeightModal, setShowWeightModal] = useState(false);
 
   return (
-    <Card fill={true} background="white" overflow={{ vertical: "scroll" }} className="styled-scroll">
+    <Card
+      fill={true}
+      background="white"
+      overflow={{ vertical: "scroll" }}
+      className="styled-scroll"
+    >
       <CardHeader pad="small">
         <Box direction="row" gap="small" align="baseline">
           <Heading level="4">Papers</Heading>
@@ -96,7 +102,7 @@ const PapersTabularView: React.FC = () => {
                 -(numHistories - 1 - i + 1)
               )[0];
 
-              const topK = paperEntries.slice(0, 5).map(d => d.doi);
+              const topK = paperEntries.slice(0, 5).map((d) => d.doi);
 
               return (
                 <MemoizedHistoryLink
@@ -145,11 +151,62 @@ const PapersTabularView: React.FC = () => {
               <div></div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Year</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Recently Published</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Keyword Similarity</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Seed Paper Similarity</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>Referenced by Seed Papers</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5, wordBreak: "break-all" }}>References Seed Papers</div>
+              <div
+                style={{
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                <Icons.Clock /> Recently Published
+              </div>
+              <div
+                style={{
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                Keyword Similarity
+              </div>
+              <div
+                style={{
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                Seed Paper Similarity
+              </div>
+              <div
+                style={{
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                <Icons.Descend /> Referenced by Seed Papers
+              </div>
+              <div
+                style={{
+                  paddingLeft: 5,
+                  paddingRight: 5,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                <Icons.List />
+                References Seed Papers
+              </div>
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
@@ -190,7 +247,8 @@ const PapersTabularView: React.FC = () => {
                             ? "rgba(0,0,255,0.1)"
                             : "white",
                       }}
-                      entry={entry} />
+                      entry={entry}
+                    />
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
                       style={{
