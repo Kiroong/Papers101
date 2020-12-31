@@ -24,17 +24,6 @@ const SummaryView: React.FC = () => {
         <Heading level="5">Seed papers</Heading>
         <SeedPapersScatterplotContainer />
       </CardBody>
-      <CardFooter
-        pad={{ horizontal: "small" }}
-        background="light-1"
-        justify="end"
-      >
-        <Button
-          onClick={() => {}}
-          icon={<Icons.Search color="plain" />}
-          hoverIndicator
-        />
-      </CardFooter>
     </Card>
   );
 };
