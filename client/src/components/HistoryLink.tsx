@@ -4,13 +4,12 @@ import { PaperEntry } from '../redux/state/overview'
 import * as d3 from 'd3'
 
 interface Props {
-    fromEntries: PaperEntry[]
-    toEntries: PaperEntry[]
+    histories: PaperEntry[][]
     offsetHeight: number
     svgWidth: number
     cellHeight: number
-    onSelect: () => any
-    topKDois: string[]
+    onSelectHistory: (historyIndex: number) => any
+    numHistories: number
     hoveredEntry: PaperEntry | null
     setHoveredEntry: (entry: PaperEntry) => any
 }

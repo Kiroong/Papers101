@@ -79,61 +79,24 @@ const PapersTabularView: React.FC = () => {
         </Box>
       </CardHeader>
       <CardBody pad="small" gap="small">
-        <Grid
-          columns={[
-            ...Array(numHistories)
-              .fill(0)
-              .map((_) => "auto"),
-            "1fr",
-          ]}
-          fill={true}
-        >
-          {Array(numHistories)
-            .fill(0)
-            .map((_, i) => {
-              const width = 35;
-              if (histories.length - 1 < numHistories - i) {
-                return <div style={{ width }} />;
-              }
-              const historyBefore = histories.slice(
-                -(numHistories - 1 - i + 2)
-              )[0];
-              const historyAfter = histories.slice(
-                -(numHistories - 1 - i + 1)
-              )[0];
-
-              const topK = paperEntries.slice(0, 5).map((d) => d.doi);
-
-              return (
-                <MemoizedHistoryLink
-                  fromEntries={historyBefore.paperEntries
-                    .filter(
-                      (entry) =>
-                        !historyBefore.seedPapers
-                          .map((e) => e.doi)
-                          .includes(entry.doi)
-                    )
-                    .slice(0, 50)}
-                  toEntries={historyAfter.paperEntries
-                    .filter(
-                      (entry) =>
-                        !historyAfter.seedPapers
-                          .map((e) => e.doi)
-                          .includes(entry.doi)
-                    )
-                    .slice(0, 50)}
-                  topKDois={topK}
-                  onSelect={() => {
-                    dispatch(actionOverview.selectHistory(historyBefore));
-                  }}
-                  offsetHeight={50}
-                  cellHeight={20}
-                  svgWidth={width}
-                  hoveredEntry={hoveredEntry}
-                  setHoveredEntry={setHoveredEntry}
-                />
-              );
-            })}
+        <Grid columns={["auto", "1fr"]} fill={true}>
+          <MemoizedHistoryLink
+            histories={histories.map((history) =>
+              history.paperEntries.filter(
+                (entry) =>
+                  !history.seedPapers.map((e) => e.doi).includes(entry.doi)
+              )
+            )}
+            onSelectHistory={(historyIndex: number) => {
+              dispatch(actionOverview.selectHistory(histories[historyIndex]));
+            }}
+            offsetHeight={50}
+            cellHeight={20}
+            svgWidth={35 * numHistories}
+            numHistories={numHistories}
+            hoveredEntry={hoveredEntry}
+            setHoveredEntry={setHoveredEntry}
+          />
           <div>
             <Grid
               rows={["50px", ...paperEntries.map((_) => "20px")]}
