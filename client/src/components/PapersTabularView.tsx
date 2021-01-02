@@ -19,7 +19,7 @@ import {
 import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
 import AdjustWeightModal from "./AdjustWeightModal";
-import MemoizedHistoryLink from "./HistoryLink";
+import HistoryLink from "./HistoryLinkRev";
 import SimilaritiesBar from "./SimilaritiesBar";
 import TitleBox from "./TitleBox";
 
@@ -80,7 +80,7 @@ const PapersTabularView: React.FC = () => {
       </CardHeader>
       <CardBody pad="small" gap="small">
         <Grid columns={["auto", "1fr"]} fill={true}>
-          <MemoizedHistoryLink
+          <HistoryLink
             histories={histories.map((history) =>
               history.paperEntries.filter(
                 (entry) =>
