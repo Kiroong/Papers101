@@ -15,10 +15,9 @@ interface Props {
 }
 
 interface HistoryLine {
+    doi: string
     fromIndex: number
-    fromDoi: string
     toIndex: number
-    toDoi: string
 }
 
 function translate(x: number, y: number) {
@@ -83,7 +82,7 @@ const HistoryLink: React.FC<Props> = ({
                     })
                     .attr('r', 3)
                     .attr('opacity', (d: HistoryLine) => {
-                        if (topKDois.includes(d.fromDoi)) {
+                        if (topKDois.includes(d.doi)) {
                             return 0.7
                         } else {
                             return 0.1
@@ -91,6 +90,16 @@ const HistoryLink: React.FC<Props> = ({
                     })
 
             } else if (histories.length > 1) {
+
+                const _lineData: HistoryLine[] = []
+                const _newHistory = histories[histories.length - 1].slice(0, 50)
+                const topKDois: string[] = _newHistory
+                .slice(0, 10)
+                .map((d) => d.doi)
+                const _prevHistory = histories[histories.length - 2].slice(
+                    0,
+                    50
+                )
                 // move existing elements to the left
                 for (let n = numHistories - 1; n >= 0; n--) {
                     console.log('hg' + n)
@@ -98,25 +107,47 @@ const HistoryLink: React.FC<Props> = ({
                         .selectAll('.hg' + n)
                         .classed('hg' + n, false)
                         .classed('hg' + (n + 1), true)
+
                 }
 
+                _root
+                    .transition()
+                    .duration(1000)
+                    .selectAll('.parallel')
+                    .attr('stroke', (d: any) => {
+                        if (topKDois.includes(d.doi)) {
+                            return d3.schemeSet1[3]
+                        } else {
+                            return d3.schemeSet1[8]
+                        }
+                    })
+                    .attr('opacity', (d: any) => {
+                        if (topKDois.includes(d.doi)) {
+                            return 0.7
+                        } else {
+                            return 0.1
+                        }
+                    })
+
+                _root
+                    .transition()
+                    .duration(1000)
+                    .selectAll('.node')
+                    .attr('opacity', (d: any) => {
+                        if (topKDois.includes(d.doi)) {
+                            return 0.7
+                        } else {
+                            return 0.1
+                        }
+                    })
                 // add new elment
-                const _lineData: HistoryLine[] = []
-                const _newHistory = histories[histories.length - 1].slice(0, 50)
-                const _prevHistory = histories[histories.length - 2].slice(
-                    0,
-                    50
-                )
-                const topKDois: string[] = _newHistory
-                    .slice(0, 10)
-                    .map((d) => d.doi)
+
                 _newHistory.forEach((te, ti) => {
                     let fi = _prevHistory.findIndex((fe) => fe.doi === te.doi)
                     _lineData.push({
                         fromIndex: fi,
-                        fromDoi: fi >= 0 ? _prevHistory[fi].doi : '',
                         toIndex: ti,
-                        toDoi: te.doi,
+                        doi: te.doi,
                     })
                 })
                 const newHistory = _root.append('g').classed('hg0', true)
@@ -144,7 +175,7 @@ const HistoryLink: React.FC<Props> = ({
                         (d: HistoryLine) => (d.toIndex + 0.5) * cellHeight
                     )
                     .attr('stroke', (d) => {
-                        if (topKDois.includes(d.toDoi)) {
+                        if (topKDois.includes(d.doi)) {
                             return d3.schemeSet1[3]
                         } else {
                             return d3.schemeSet1[8]
@@ -153,7 +184,7 @@ const HistoryLink: React.FC<Props> = ({
                     .attr('stroke-width', 3) //cellHeight * 0.6)
                     .attr('stroke-linecap', 'round')
                     .attr('opacity', (d) => {
-                        if (topKDois.includes(d.toDoi)) {
+                        if (topKDois.includes(d.doi)) {
                             return 0.7
                         } else {
                             return 0.1
@@ -165,13 +196,13 @@ const HistoryLink: React.FC<Props> = ({
                     .data(_lineData)
                     .join('circle')
                     .classed('node', true)
-                    .attr('cx', svgWidth)
+                    .attr('cx', svgWidth+svgWidth/5)
                     .attr('cy', (d: HistoryLine, i: number) => {
                         return (i + 0.5) * cellHeight
                     })
                     .attr('r', 3)
                     .attr('opacity', (d: HistoryLine) => {
-                        if (topKDois.includes(d.fromDoi)) {
+                        if (topKDois.includes(d.doi)) {
                             return 0.7
                         } else {
                             return 0.1
