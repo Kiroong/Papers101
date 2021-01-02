@@ -14,6 +14,7 @@ import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import {
   setHoveredEntry as _setHoveredEntry,
+  setSelectedEntry as _setSelectedEntry,
   useThunkDispatch,
 } from "../redux/action/root-action";
 import { PaperEntry } from "../redux/state/overview";
@@ -34,16 +35,23 @@ const PapersTabularView: React.FC = () => {
   const paperEntries = useRootSelector((state) =>
     state.overview.paperEntries
       .filter((entry) => !seedPapers.map((e) => e.doi).includes(entry.doi))
-      .slice(0, 50)
+      .slice(0, 30)
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
   const weightsHash = `${weights.recentlyPublished.maxVal}:${weights.keywordSimilarity.maxVal}:${weights.seedPaperSimilarity.maxVal}:${weights.referencedBySeedPapers.maxVal}:${weights.referencesSeedPapers.maxVal}`;
 
-  const hoveredEntry = useRootSelector((state) => state.hoveredEntry);
+  const hoveredEntry = useRootSelector((state) => state.ui.hoveredEntry);
   const setHoveredEntry = (entry: PaperEntry) => {
     if (hoveredEntry?.doi !== entry.doi) {
       dispatch(_setHoveredEntry(entry));
+    }
+  };
+
+  const selectedEntry = useRootSelector((state) => state.ui.selectedEntry);
+  const setSelectedEntry = (entry: PaperEntry) => {
+    if (selectedEntry?.doi !== entry.doi) {
+      dispatch(_setSelectedEntry(entry));
     }
   };
 
@@ -97,11 +105,11 @@ const PapersTabularView: React.FC = () => {
             hoveredEntry={hoveredEntry}
             setHoveredEntry={setHoveredEntry}
           />
-          <div>
+          <div style={{ height: "100%" }}>
             <Grid
+              fill={true}
               rows={["50px", ...paperEntries.map((_) => "20px")]}
               columns={[
-                "auto",
                 "4fr",
                 "auto",
                 `${weights.recentlyPublished.maxVal}fr`,
@@ -111,7 +119,6 @@ const PapersTabularView: React.FC = () => {
                 `${weights.referencesSeedPapers.maxVal}fr`,
               ]}
             >
-              <div></div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Year</div>
               <div
@@ -173,37 +180,9 @@ const PapersTabularView: React.FC = () => {
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
-                    <Box
-                      direction="row"
-                      align="baseline"
-                      pad={{ horizontal: "small" }}
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <Button
-                        onClick={() => {
-                          if (!seedPapers.includes(entry)) {
-                            dispatch(
-                              actionOverview.setSeedPapers([
-                                ...seedPapers,
-                                entry,
-                              ])
-                            );
-                          }
-                        }}
-                      >
-                        SEED
-                      </Button>
-                    </Box>
                     <TitleBox
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         backgroundColor:
                           hoveredEntry?.doi === entry.doi
@@ -214,6 +193,7 @@ const PapersTabularView: React.FC = () => {
                     />
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         paddingLeft: 5,
                         paddingRight: 5,
@@ -227,6 +207,7 @@ const PapersTabularView: React.FC = () => {
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         paddingLeft: 5,
                         paddingRight: 5,
@@ -245,6 +226,7 @@ const PapersTabularView: React.FC = () => {
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         paddingLeft: 5,
                         paddingRight: 5,
@@ -263,6 +245,7 @@ const PapersTabularView: React.FC = () => {
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         paddingLeft: 5,
                         paddingRight: 5,
@@ -281,6 +264,7 @@ const PapersTabularView: React.FC = () => {
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         paddingLeft: 5,
                         paddingRight: 5,
@@ -299,6 +283,7 @@ const PapersTabularView: React.FC = () => {
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
                       style={{
                         paddingLeft: 5,
                         paddingRight: 5,

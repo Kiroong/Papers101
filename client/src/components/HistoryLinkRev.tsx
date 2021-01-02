@@ -33,7 +33,7 @@ const HistoryLink: React.FC<Props> = ({
     hoveredEntry,
     setHoveredEntry,
 }) => {
-    const svgHeight: number = cellHeight * 50
+    const svgHeight: number = cellHeight * 30
     const [prevHistoryLength, setPrevHistoryLength] = useState<number>(0)
     const root = useRef<HTMLDivElement>(null)
     const topk: number = 10;

@@ -12,13 +12,20 @@ export const setHoveredEntry = createAction(
   (paperEntry: PaperEntry) => paperEntry
 )();
 
+export const setSelectedEntry = createAction(
+  "SET_SELECTED_ENTRY",
+  (paperEntry: PaperEntry) => paperEntry
+)();
+
 export type ReducibleAction =
   | OverviewActionReducible
-  | ReturnType<typeof setHoveredEntry>;
+  | ReturnType<typeof setHoveredEntry>
+  | ReturnType<typeof setSelectedEntry>;
 
 export type DispatchableAction =
   | OverviewActionDispatchable
-  | ReturnType<typeof setHoveredEntry>;
+  | ReturnType<typeof setHoveredEntry>
+  | ReturnType<typeof setSelectedEntry>;
 
 type CustomDispatch = Dispatch<DispatchableAction>;
 export const useThunkDispatch = () => useDispatch<CustomDispatch>();

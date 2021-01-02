@@ -1,16 +1,30 @@
 import { combineReducers } from "redux";
 import { getType } from "typesafe-actions";
-import { ReducibleAction, setHoveredEntry } from "../action/root-action";
+import { ReducibleAction, setHoveredEntry, setSelectedEntry } from "../action/root-action";
 import { PaperEntry } from "../state/overview";
+import { UIState } from "../state/root-state";
 import { overviewReducer } from "./overview-reducers";
 
-const hoveredEntryReducer = (
-  state: PaperEntry | null = null,
+const defaultUIState: UIState = {
+  hoveredEntry: null,
+  selectedEntry: null,
+}
+
+const uiReducer = (
+  state: UIState = defaultUIState,
   action: ReducibleAction
 ) => {
   switch (action.type) {
     case getType(setHoveredEntry):
-      return action.payload;
+      return {
+        ...state,
+        hoveredEntry: action.payload
+      };
+    case getType(setSelectedEntry):
+      return {
+        ...state,
+        selectedEntry: action.payload
+      };
     default:
       return state;
   }
@@ -18,5 +32,5 @@ const hoveredEntryReducer = (
 
 export const rootReducer = combineReducers({
   overview: overviewReducer,
-  hoveredEntry: hoveredEntryReducer,
+  ui: uiReducer,
 });

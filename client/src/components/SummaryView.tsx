@@ -17,7 +17,7 @@ import SeedPapersScatterplotContainer from "./SeedPapersScatterplotContainer";
 const SummaryView: React.FC = () => {
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const paperEntries = useRootSelector((state) =>
-    state.overview.paperEntries.slice(0, 50)
+    state.overview.paperEntries.slice(0, 30)
   );
 
   const [targetPaperMode, setTargetPaperMode] = useState("from search result");
