@@ -164,10 +164,14 @@ function updateSortedPaperEntries(
         state.weights.referencedBySeedPapers.maxVal,
   }));
 
-  const sorted = withScore.sort((a, b) =>
-    a.score === b.score ? b.year - a.year : b.score - a.score
-  );
-  return sorted;
+  if (state.keywords.length === 0 && state.seedPapers.length === 0) {
+    return withScore;
+  } else {
+    const sorted = withScore.sort((a, b) =>
+      a.score === b.score ? b.year - a.year : b.score - a.score
+    );
+    return sorted;
+  }
 }
 
 export const overviewReducer = (

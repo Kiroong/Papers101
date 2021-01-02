@@ -89,212 +89,216 @@ const PapersTabularView: React.FC = () => {
         </Box>
       </CardHeader>
       <CardBody pad="small" gap="small">
-        <Grid columns={["auto", "1fr"]} fill={true}>
-          <HistoryLink
-            histories={histories.map((history) =>
-              history.paperEntries.filter(
-                (entry) =>
-                  !history.seedPapers.map((e) => e.doi).includes(entry.doi)
-              )
-            )}
-            onSelectHistory={(historyIndex: number) => {
-              dispatch(actionOverview.selectHistory(histories[historyIndex]));
-            }}
-            offsetHeight={50}
-            cellHeight={20}
-            svgWidth={35 * numHistories}
-            numHistories={numHistories}
-            hoveredEntry={hoveredEntry}
-            setHoveredEntry={setHoveredEntry}
-          />
-          <div style={{ height: "100%" }}>
-            <Grid
-              fill={true}
-              rows={["50px", ...paperEntries.map((_) => "20px")]}
-              columns={[
-                "auto",
-                "4fr",
-                `${weights.recentlyPublished.maxVal}fr`,
-                `${weights.keywordSimilarity.maxVal}fr`,
-                `${weights.seedPaperSimilarity.maxVal}fr`,
-                `${weights.referencedBySeedPapers.maxVal}fr`,
-                `${weights.referencesSeedPapers.maxVal}fr`,
-              ]}
-            >
-              <div>Rank</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
-              <div
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                }}
+        {histories.length > 1 ? (
+          <Grid columns={["auto", "1fr"]} fill={true}>
+            <HistoryLink
+              histories={histories.map((history) =>
+                history.paperEntries.filter(
+                  (entry) =>
+                    !history.seedPapers.map((e) => e.doi).includes(entry.doi)
+                )
+              )}
+              onSelectHistory={(historyIndex: number) => {
+                dispatch(actionOverview.selectHistory(histories[historyIndex]));
+              }}
+              offsetHeight={50}
+              cellHeight={20}
+              svgWidth={35 * numHistories}
+              numHistories={numHistories}
+              hoveredEntry={hoveredEntry}
+              setHoveredEntry={setHoveredEntry}
+            />
+            <div style={{ height: "100%" }}>
+              <Grid
+                fill={true}
+                rows={["50px", ...paperEntries.map((_) => "20px")]}
+                columns={[
+                  "auto",
+                  "4fr",
+                  `${weights.recentlyPublished.maxVal}fr`,
+                  `${weights.keywordSimilarity.maxVal}fr`,
+                  `${weights.seedPaperSimilarity.maxVal}fr`,
+                  `${weights.referencedBySeedPapers.maxVal}fr`,
+                  `${weights.referencesSeedPapers.maxVal}fr`,
+                ]}
               >
-                Year
-              </div>
-              <div
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                }}
-              >
-                Keyword Similarity
-              </div>
-              <div
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                }}
-              >
-                Seed Paper Similarity
-              </div>
-              <div
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                }}
-              >
-                Referenced by Seed Papers
-              </div>
-              <div
-                style={{
-                  paddingLeft: 5,
-                  paddingRight: 5,
-                }}
-              >
-                References Seed Papers
-              </div>
-              {paperEntries &&
-                paperEntries.map((entry, i) => (
-                  <>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        textAlign: "center",
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      {i + 1}
-                    </div>
-                    <TitleBox
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                      entry={entry}
-                    />
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <Stack fill={true} anchor="left">
+                <div>Rank</div>
+                <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
+                <div
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                >
+                  Year
+                </div>
+                <div
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                >
+                  Keyword Similarity
+                </div>
+                <div
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                >
+                  Seed Paper Similarity
+                </div>
+                <div
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                >
+                  Referenced by Seed Papers
+                </div>
+                <div
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                >
+                  References Seed Papers
+                </div>
+                {paperEntries &&
+                  paperEntries.map((entry, i) => (
+                    <>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          textAlign: "center",
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        {i + 1}
+                      </div>
+                      <TitleBox
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                        entry={entry}
+                      />
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        <Stack fill={true} anchor="left">
+                          <SimilaritiesBar
+                            key={weightsHash}
+                            similarities={[entry.recentlyPublished]}
+                            maxOfSum={1}
+                            color={[d3.schemeReds[9][1]]}
+                          />
+                          <Text size="xsmall">{entry.year}</Text>
+                        </Stack>
+                      </div>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
                         <SimilaritiesBar
                           key={weightsHash}
-                          similarities={[entry.recentlyPublished]}
+                          similarities={entry.keywordSims}
                           maxOfSum={1}
-                          color={[d3.schemeReds[9][1]]}
+                          color={d3.schemeTableau10}
                         />
-                        <Text size="xsmall">{entry.year}</Text>
-                      </Stack>
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <SimilaritiesBar
-                        key={weightsHash}
-                        similarities={entry.keywordSims}
-                        maxOfSum={1}
-                        color={d3.schemeTableau10}
-                      />
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <SimilaritiesBar
-                        key={weightsHash}
-                        similarities={entry.seedPaperSims}
-                        maxOfSum={1}
-                        color={d3.schemePurples[9].slice(3)}
-                      />
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <SimilaritiesBar
-                        key={weightsHash}
-                        similarities={entry.referencedBySeedPapers}
-                        maxOfSum={1}
-                        color={d3.schemePurples[9].slice(3)}
-                      />
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <SimilaritiesBar
-                        key={weightsHash}
-                        similarities={entry.referencesSeedPapers}
-                        maxOfSum={1}
-                        color={d3.schemePurples[9].slice(3)}
-                      />
-                    </div>
-                  </>
-                ))}
-            </Grid>
-          </div>
-        </Grid>
+                      </div>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        <SimilaritiesBar
+                          key={weightsHash}
+                          similarities={entry.seedPaperSims}
+                          maxOfSum={1}
+                          color={d3.schemePurples[9].slice(3)}
+                        />
+                      </div>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        <SimilaritiesBar
+                          key={weightsHash}
+                          similarities={entry.referencedBySeedPapers}
+                          maxOfSum={1}
+                          color={d3.schemePurples[9].slice(3)}
+                        />
+                      </div>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        <SimilaritiesBar
+                          key={weightsHash}
+                          similarities={entry.referencesSeedPapers}
+                          maxOfSum={1}
+                          color={d3.schemePurples[9].slice(3)}
+                        />
+                      </div>
+                    </>
+                  ))}
+              </Grid>
+            </div>
+          </Grid>
+        ) : (
+          <Text>Enter search keywords on the left</Text>
+        )}
       </CardBody>
     </Card>
   );
