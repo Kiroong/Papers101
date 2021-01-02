@@ -36,6 +36,7 @@ const HistoryLink: React.FC<Props> = ({
     const svgHeight: number = cellHeight * 50
     const [prevHistoryLength, setPrevHistoryLength] = useState<number>(0)
     const root = useRef<HTMLDivElement>(null)
+    let topKDois: string[] = []
 
     useEffect(() => {
         // Init
@@ -66,12 +67,12 @@ const HistoryLink: React.FC<Props> = ({
             if (histories.length === 1) {
                 const _lineData: HistoryLine[] = []
                 const _newHistory = histories[histories.length - 1].slice(0, 50)
-                const topKDois: string[] = _newHistory
+                topKDois = _newHistory
                     .slice(0, 10)
-                    .map((d) => d.doi);
+                    .map((d) => d.doi)
 
-                    const newHistory = _root.append('g').classed('hg0', true)
-                    newHistory
+                const newHistory = _root.append('g').classed('hg0', true)
+                newHistory
                     .selectAll('.node')
                     .data(_lineData)
                     .join('circle')
@@ -88,14 +89,12 @@ const HistoryLink: React.FC<Props> = ({
                             return 0.1
                         }
                     })
-
             } else if (histories.length > 1) {
-
                 const _lineData: HistoryLine[] = []
                 const _newHistory = histories[histories.length - 1].slice(0, 50)
-                const topKDois: string[] = _newHistory
-                .slice(0, 10)
-                .map((d) => d.doi)
+                topKDois = _newHistory
+                    .slice(0, 10)
+                    .map((d) => d.doi)
                 const _prevHistory = histories[histories.length - 2].slice(
                     0,
                     50
@@ -107,7 +106,6 @@ const HistoryLink: React.FC<Props> = ({
                         .selectAll('.hg' + n)
                         .classed('hg' + n, false)
                         .classed('hg' + (n + 1), true)
-
                 }
 
                 _root
@@ -161,7 +159,7 @@ const HistoryLink: React.FC<Props> = ({
                     .attr(
                         'x1',
                         (d: HistoryLine) =>
-                            d.fromIndex >= 0 ? svgWidth : svgWidth
+                            d.fromIndex >= 0 ? svgWidth : svgWidth*1.19
                         //d.fromIndex >= 0 ? 0 : svgWidth * (0.95)
                     )
                     .attr('y1', (d: HistoryLine) =>
@@ -196,7 +194,7 @@ const HistoryLink: React.FC<Props> = ({
                     .data(_lineData)
                     .join('circle')
                     .classed('node', true)
-                    .attr('cx', svgWidth+svgWidth/5)
+                    .attr('cx', svgWidth + svgWidth / 5)
                     .attr('cy', (d: HistoryLine, i: number) => {
                         return (i + 0.5) * cellHeight
                     })
@@ -220,16 +218,45 @@ const HistoryLink: React.FC<Props> = ({
                         )
                 }
 
-                _root
-                    .selectAll('.hg5')
-                    .remove()
+                _root.selectAll('.hg5').remove()
             }
         }
     }, [histories])
 
     useEffect(() => {
         //console.log('hover')
+        if (hoveredEntry !== null) {
+            const _root = d3
+                .select(root.current)
+                .select('svg')
+                .select('.history-content')
+
+            _root
+                .selectAll('.hovered')
+                .classed('hovered', false)
+                .classed('unhovered', true)
+                .attr('stroke-width', 3)
+                .attr('opacity', (d: any) => {
+                    if (topKDois.includes(d.doi)) {
+                        return 0.7
+                    } else {
+                        return 0.1
+                    }
+                })
+
+            _root
+                .selectAll('.parallel')
+                .filter((d: any) => d.doi == hoveredEntry.doi)
+                .classed('hovered', true)
+                .attr('stroke-width', cellHeight)
+                .attr('opacity', 0.9)
+        }
     }, [hoveredEntry])
+
+    //    History 버튼 눌렸을 때 애니메이션 만들기용 Effect
+    //    useEffect(() => {
+    //
+    //    }, [])
 
     return (
         <div ref={root} style={{ width: svgWidth }}>
