@@ -9,6 +9,8 @@ import {
   Grid,
   Heading,
   Layer,
+  Stack,
+  Text,
 } from "grommet";
 import React, { useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
@@ -112,7 +114,6 @@ const PapersTabularView: React.FC = () => {
               columns={[
                 "auto",
                 "4fr",
-                "auto",
                 `${weights.recentlyPublished.maxVal}fr`,
                 `${weights.keywordSimilarity.maxVal}fr`,
                 `${weights.seedPaperSimilarity.maxVal}fr`,
@@ -122,7 +123,6 @@ const PapersTabularView: React.FC = () => {
             >
               <div>Rank</div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
-              <div style={{ paddingLeft: 5, paddingRight: 5 }}>Year</div>
               <div
                 style={{
                   paddingLeft: 5,
@@ -132,7 +132,7 @@ const PapersTabularView: React.FC = () => {
                   textOverflow: "ellipsis",
                 }}
               >
-                <Icons.Clock /> Recently Published
+                Year
               </div>
               <div
                 style={{
@@ -220,26 +220,15 @@ const PapersTabularView: React.FC = () => {
                             : "white",
                       }}
                     >
-                      {entry.year}
-                    </div>
-                    <div
-                      onMouseOver={() => setHoveredEntry(entry)}
-                      onClick={() => setSelectedEntry(entry)}
-                      style={{
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        backgroundColor:
-                          hoveredEntry?.doi === entry.doi
-                            ? "rgba(0,0,255,0.1)"
-                            : "white",
-                      }}
-                    >
-                      <SimilaritiesBar
-                        key={weightsHash}
-                        similarities={[entry.recentlyPublished]}
-                        maxOfSum={1}
-                        color={[d3.schemeGreys[3][1]]}
-                      />
+                      <Stack fill={true} anchor="left">
+                        <SimilaritiesBar
+                          key={weightsHash}
+                          similarities={[entry.recentlyPublished]}
+                          maxOfSum={1}
+                          color={[d3.schemeReds[9][1]]}
+                        />
+                        <Text size="xsmall">{entry.year}</Text>
+                      </Stack>
                     </div>
                     <div
                       onMouseOver={() => setHoveredEntry(entry)}
