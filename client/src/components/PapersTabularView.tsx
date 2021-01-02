@@ -127,9 +127,6 @@ const PapersTabularView: React.FC = () => {
                 style={{
                   paddingLeft: 5,
                   paddingRight: 5,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
                 }}
               >
                 Year
@@ -138,9 +135,6 @@ const PapersTabularView: React.FC = () => {
                 style={{
                   paddingLeft: 5,
                   paddingRight: 5,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
                 }}
               >
                 Keyword Similarity
@@ -149,9 +143,6 @@ const PapersTabularView: React.FC = () => {
                 style={{
                   paddingLeft: 5,
                   paddingRight: 5,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
                 }}
               >
                 Seed Paper Similarity
@@ -160,23 +151,16 @@ const PapersTabularView: React.FC = () => {
                 style={{
                   paddingLeft: 5,
                   paddingRight: 5,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
                 }}
               >
-                <Icons.Descend /> Referenced by Seed Papers
+                Referenced by Seed Papers
               </div>
               <div
                 style={{
                   paddingLeft: 5,
                   paddingRight: 5,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
                 }}
               >
-                <Icons.List />
                 References Seed Papers
               </div>
               {paperEntries &&
