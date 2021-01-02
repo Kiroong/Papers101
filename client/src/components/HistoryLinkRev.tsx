@@ -36,7 +36,7 @@ const HistoryLink: React.FC<Props> = ({
     const svgHeight: number = cellHeight * 50
     const [prevHistoryLength, setPrevHistoryLength] = useState<number>(0)
     const root = useRef<HTMLDivElement>(null)
-    let topKDois: string[] = []
+    const topk: number = 10;
 
     useEffect(() => {
         // Init
@@ -67,9 +67,7 @@ const HistoryLink: React.FC<Props> = ({
             if (histories.length === 1) {
                 const _lineData: HistoryLine[] = []
                 const _newHistory = histories[histories.length - 1].slice(0, 50)
-                topKDois = _newHistory
-                    .slice(0, 10)
-                    .map((d) => d.doi)
+                const topKDois: string[] = _newHistory.slice(0, topk).map((d) => d.doi)
 
                 const newHistory = _root.append('g').classed('hg0', true)
                 newHistory
@@ -92,9 +90,7 @@ const HistoryLink: React.FC<Props> = ({
             } else if (histories.length > 1) {
                 const _lineData: HistoryLine[] = []
                 const _newHistory = histories[histories.length - 1].slice(0, 50)
-                topKDois = _newHistory
-                    .slice(0, 10)
-                    .map((d) => d.doi)
+                const topKDois: string[] = _newHistory.slice(0, topk).map((d) => d.doi)
                 const _prevHistory = histories[histories.length - 2].slice(
                     0,
                     50
@@ -159,7 +155,7 @@ const HistoryLink: React.FC<Props> = ({
                     .attr(
                         'x1',
                         (d: HistoryLine) =>
-                            d.fromIndex >= 0 ? svgWidth : svgWidth*1.19
+                            d.fromIndex >= 0 ? svgWidth : svgWidth * 1.19
                         //d.fromIndex >= 0 ? 0 : svgWidth * (0.95)
                     )
                     .attr('y1', (d: HistoryLine) =>
@@ -225,7 +221,9 @@ const HistoryLink: React.FC<Props> = ({
 
     useEffect(() => {
         //console.log('hover')
+
         if (hoveredEntry !== null) {
+            const topKDois: string[] = histories[histories.length - 1].slice(0, topk).map(d => d.doi)
             const _root = d3
                 .select(root.current)
                 .select('svg')
@@ -243,7 +241,7 @@ const HistoryLink: React.FC<Props> = ({
                         return 0.1
                     }
                 })
-
+                
             _root
                 .selectAll('.parallel')
                 .filter((d: any) => d.doi == hoveredEntry.doi)
