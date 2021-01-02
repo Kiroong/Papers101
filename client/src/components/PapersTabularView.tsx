@@ -110,6 +110,7 @@ const PapersTabularView: React.FC = () => {
               fill={true}
               rows={["50px", ...paperEntries.map((_) => "20px")]}
               columns={[
+                "auto",
                 "4fr",
                 "auto",
                 `${weights.recentlyPublished.maxVal}fr`,
@@ -119,6 +120,7 @@ const PapersTabularView: React.FC = () => {
                 `${weights.referencesSeedPapers.maxVal}fr`,
               ]}
             >
+              <div>Rank</div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>Year</div>
               <div
@@ -180,6 +182,21 @@ const PapersTabularView: React.FC = () => {
               {paperEntries &&
                 paperEntries.map((entry, i) => (
                   <>
+                    <div
+                      onMouseOver={() => setHoveredEntry(entry)}
+                      onClick={() => setSelectedEntry(entry)}
+                      style={{
+                        paddingLeft: 5,
+                        paddingRight: 5,
+                        textAlign: "center",
+                        backgroundColor:
+                          hoveredEntry?.doi === entry.doi
+                            ? "rgba(0,0,255,0.1)"
+                            : "white",
+                      }}
+                    >
+                      {i + 1}
+                    </div>
                     <TitleBox
                       onMouseOver={() => setHoveredEntry(entry)}
                       onClick={() => setSelectedEntry(entry)}
