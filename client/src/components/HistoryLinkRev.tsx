@@ -1,10 +1,15 @@
+import * as Icons from 'grommet-icons';
 import { Box } from 'grommet'
 import React, { useRef, useEffect, useState, Ref } from 'react'
 import { PaperEntry } from '../redux/state/overview'
+import {ReactComponent as KeywordIcon} from './keyword-research.svg';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 import * as d3 from 'd3'
 
 interface Props {
     histories: PaperEntry[][]
+    historiesDiff: {type: string, keywords?: string[], papers?: PaperEntry[]}[]
     offsetHeight: number
     svgWidth: number
     cellHeight: number
@@ -26,6 +31,7 @@ function translate(x: number, y: number) {
 
 const HistoryLink: React.FC<Props> = ({
     histories,
+    historiesDiff,
     offsetHeight,
     cellHeight,
     svgWidth,
@@ -43,7 +49,7 @@ const HistoryLink: React.FC<Props> = ({
 
         let _root = d3
             .select(root.current)
-            .select('svg')
+            .select('.root-svg')
             .select('.history-content')
     }, [])
 
@@ -59,7 +65,7 @@ const HistoryLink: React.FC<Props> = ({
             // update
             const _root = d3
                 .select(root.current)
-                .select('svg')
+                .select('.root-svg')
                 .select('.history-content')
             // Update previous history length
             setPrevHistoryLength(histories.length)
@@ -226,7 +232,7 @@ const HistoryLink: React.FC<Props> = ({
             const topKDois: string[] = histories[histories.length - 1].slice(0, topk).map(d => d.doi)
             const _root = d3
                 .select(root.current)
-                .select('svg')
+                .select('.root-svg')
                 .select('.history-content')
 
             _root
@@ -260,23 +266,84 @@ const HistoryLink: React.FC<Props> = ({
         <div ref={root} style={{ width: svgWidth }}>
             <div
                 className={'history-header'}
-                style={{ width: svgWidth, height: offsetHeight }}
+                style={{ width: svgWidth, height: offsetHeight, display: "flex", justifyContent: "flex-end" }}
             >
-                {[...Array(numHistories)].map((n, i) => {
+                {[...historiesDiff.slice(-numHistories)].map((diff) => {
                     return (
                         <div
                             style={{
                                 width: svgWidth / numHistories,
                                 height: offsetHeight,
-                                display: 'inline-flex',
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                             }}
                         >
-                            버튼공간
+                            {
+                                diff.type === "+K" ? (
+
+                                    <Popup 
+                                        trigger={
+                                            <KeywordIcon style={{fill: "green", width: 24, height: 24 }}/>
+                                        }
+                                        on={["hover"]}
+                                    >
+                                        Added a keyword: {diff.keywords?.join(', ') || ''}
+                                    </Popup>
+
+                                ) : diff.type === "-K" ? (
+                                    <Popup 
+                                        trigger={
+                                            <KeywordIcon style={{fill: "red", width: 24, height: 24 }}/>
+                                        }
+                                        on={["hover"]}
+                                    >
+                                        Deleted a keyword: {diff.keywords?.join(', ') || ''}
+                                    </Popup>
+
+                                ) : diff.type === "+S" ? (
+                                    <Popup 
+                                        trigger={
+                                            <div>
+                                                <Icons.DocumentText color="green" />
+                                            </div>
+                                        }
+                                        on={["hover"]}
+                                    >
+                                        Added a paper: {diff.papers?.map(p => p.title).join(', ') || ''}
+                                    </Popup>
+
+                                ) : diff.type === "-S" ? (
+                                    <Popup 
+                                        trigger={
+                                            <div>
+                                                <Icons.DocumentText color="red" />
+                                            </div>
+                                        }
+                                        on={["hover"]}
+                                    >
+                                        Deleted a paper: {diff.papers?.map(p => p.title).join(', ') || ''}
+                                    </Popup>
+
+                                ) : diff.type === "CW" ? (
+                                    <Popup 
+                                        trigger={
+                                            <div>
+                                                <Icons.Calculator color="brown" />
+                                            </div>
+                                            }
+                                            on={["hover"]}
+                                        >
+                                            Changed weight
+                                        </Popup>
+
+                                    ) : <div />
+                            }
                         </div>
                     )
                 })}
             </div>
-            <svg height={svgHeight} width={svgWidth}>
+            <svg className="root-svg" height={svgHeight} width={svgWidth}>
                 <g
                     className={'history-content'}
                     height={svgHeight}

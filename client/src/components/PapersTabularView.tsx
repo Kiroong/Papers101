@@ -31,6 +31,50 @@ const PapersTabularView: React.FC = () => {
     ...state.overview.histories,
     state.overview,
   ]);
+  const historiesDiff = histories
+    .map((history, i) => {
+      if (i === 0) {
+        return { type: "undefined" };
+      }
+      const prevHistory = histories[i - 1];
+      if (history.keywords.length > prevHistory.keywords.length) {
+        return {
+          type: "+K",
+          keywords: history.keywords.filter(
+            (keyword) => !prevHistory.keywords.includes(keyword)
+          ),
+        };
+      }
+      if (history.keywords.length < prevHistory.keywords.length) {
+        return {
+          type: "-K",
+          keywords: prevHistory.keywords.filter(
+            (keyword) => !history.keywords.includes(keyword)
+          ),
+        };
+      }
+      if (history.seedPapers.length > prevHistory.seedPapers.length) {
+        return {
+          type: "+S",
+          papers: history.seedPapers.filter(
+            (paper) =>
+              !prevHistory.seedPapers.map((d) => d.doi).includes(paper.doi)
+          ),
+        };
+      }
+      if (history.seedPapers.length < prevHistory.seedPapers.length) {
+        return {
+          type: "-S",
+          papers: prevHistory.seedPapers.filter(
+            (paper) => !history.seedPapers.map((d) => d.doi).includes(paper.doi)
+          ),
+        };
+      }
+      return {
+        type: "CW",
+      };
+    })
+    .slice(1);
   const numHistories = 5;
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
@@ -98,6 +142,7 @@ const PapersTabularView: React.FC = () => {
                     !history.seedPapers.map((e) => e.doi).includes(entry.doi)
                 )
               )}
+              historiesDiff={historiesDiff}
               onSelectHistory={(historyIndex: number) => {
                 dispatch(actionOverview.selectHistory(histories[historyIndex]));
               }}
