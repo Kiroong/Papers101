@@ -48,8 +48,8 @@ def crawl(bibpath):
     # specify headless mode
     options.add_argument('headless')
     options.add_argument("start-maximized")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option('useAutomationExtension', False)
+    #options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    #options.add_experimental_option('useAutomationExtension', False)
     # add disable gpu option
     options.add_argument("disable-gpu")
     browser = webdriver.Chrome(WEBDRIVER_PATH, options=options)
@@ -123,7 +123,7 @@ def crawl(bibpath):
                 ref_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-reference-link-viewArticle')]
                 refs_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-crossRef')]
                 refs_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-accessAcm')]
-                
+                #print(ref_links_ieee)
                 refs_ieee = get_ieee_dois_of_ref(ref_links_ieee)
                 refs = refs_ieee + refs_acm + refs_cross
                 # TODO: with reference check module, get dois of ref_links_ieee
@@ -136,7 +136,7 @@ def crawl(bibpath):
 
             # get citation data
             cite_url = f'https://ieeexplore.ieee.org/document/{ikey}/citations#citations'
-            # print(cite_url)
+            #print(cite_url)
             cites = []
             response = requests.get(cite_url)
             if response.ok:
@@ -172,6 +172,7 @@ def crawl(bibpath):
                 "referenced_by": cites, 
                 "referencing": refs,
             }
+            
             time.sleep(random.randint(5, 10))
     
     browser.quit()
