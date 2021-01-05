@@ -86,7 +86,7 @@ def crawl(bibpath):
             doi = bib['doi']    # get doi which is used as primary key
             ikey = bib['ID']    # get ID to find url
             # TODO: authors
-            author = bib['author'].replace('{', '').replace('}', '').split(',')
+            author = bib['author'].replace('{', '').replace('}', '').split(' and ')
             author = [a.strip()for a in author]
             # TODO: abstract
             abstract = bib['abstract']
@@ -187,7 +187,7 @@ def crawl(bibpath):
 
 
 if __name__ == "__main__":
-    bibpaths = glob('./vis_bibtex/*.bib')
+    bibpaths = glob('./vis_bib/*.bib')
     #print(bibpaths)
     for bibpath in bibpaths:
         crawl(bibpath)
