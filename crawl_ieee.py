@@ -7,7 +7,7 @@ import time
 import random
 import json
 
-WEBDRIVER_PATH = './chromedriver.exe'
+WEBDRIVER_PATH = './chromedriver'
 
 '''
 @ARTICLE{7274774,
@@ -32,6 +32,21 @@ def crawl(bibpath):
     # add disable gpu option
     options.add_argument("disable-gpu")
     browser = webdriver.Chrome(WEBDRIVER_PATH, options=options)
+
+    def get_ieee_dois_of_ref(ref_links):
+        dois = []
+        # print(ref_links)
+        for url in ref_links:
+            # print(url)
+            response = requests.get(url)
+            if response.ok:
+                browser.implicitly_wait(2)
+                browser.get(url)
+                doi = browser.find_element_by_class_name('stats-document-abstract-doi').find_element_by_tag_name('a')
+                # print(doi.text)
+                dois.append(doi.text)
+        # print(dois)
+        return dois
 
     # TODO: save data in data
     data = {}
@@ -72,6 +87,8 @@ def crawl(bibpath):
                 refs_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-crossRef')]
                 refs_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-accessAcm')]
                 
+                ieee_dois = get_ieee_dois_of_ref(ref_links_ieee)
+
                 # TODO: with reference check module, get dois of ref_links_ieee
                 with open('log.txt', 'a') as f:
                     f.write(f'[SUCCESS] {doi} ref\n')
@@ -109,5 +126,8 @@ def crawl(bibpath):
     browser.quit()
 
 
+
+
+
 if __name__ == "__main__":
-    crawl('./tvcg/tvcg-11-01.bib')
+    crawl('./tvcg-10-01.bib')
