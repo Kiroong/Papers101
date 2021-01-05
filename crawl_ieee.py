@@ -74,7 +74,16 @@ def crawl(bibpath):
     # TODO: save data in data
     data = {}
     # open bib file
+
+    outfile_path = './vis_data/'
+    outfile_name = bibpath.split('\\')[1].split('.')[0]
+
     with open(bibpath, 'r', encoding='utf8') as bibfile :
+
+        if not glob(outfile_path+outfile_name+'.json') :
+            with open(outfile_path+outfile_name+'.json', 'w', encoding='utf8') as outfile :
+                d = dict()
+                json.dump(d, outfile)
 
         # with bibtexparser, parse bib file
         bibs = bibtexparser.load(bibfile)
@@ -84,110 +93,121 @@ def crawl(bibpath):
             #print(bib)
             entrytype = bib['ENTRYTYPE']
             doi = bib['doi']    # get doi which is used as primary key
-            ikey = bib['ID']    # get ID to find url
-            # TODO: authors
-            author = bib['author'].replace('{', '').replace('}', '').split(' and ')
-            author = [a.strip()for a in author]
-            # TODO: abstract
-            abstract = bib['abstract']
-            # TODO: title
-            title = bib['title']
-            # TODO: year
-            year = bib['year']
-            # TODO: keywords
-            keywords = bib['keywords'].split(';')
-            # TODO: journal ( conference )
-            published = ''
-            if entrytype == 'articles' :
-                published = bib['journal']
-            elif entrytype == 'inproceedings' :
-                published = bib['booktitle']
-            # TODO: volume
-            # 그냥 bib에 존재하는 데이터 다 data로 때려 박을까?
 
-            # TODO: to distinguish from chi data, please change location
-            filepath = f"crawled/{doi}.txt"
-            if pathlib.Path(filepath).exists():
-                print(f'[PASS] {doi}')
-                continue
+            data = {}
+            already_crawled_dois = []
+            with open(outfile_path+outfile_name+'.json', 'r', encoding='utf8') as outfile :
+                data = json.load(outfile)
+            already_crawled_dois = data.keys()
 
-            # Get reference data
-            ref_url = f'https://ieeexplore.ieee.org/document/{ikey}/references#references'
-            #print(ref_url)
-            response = requests.get(ref_url)
-            refs = []
-            if response.ok:
-                browser.implicitly_wait(3)
-                browser.get(ref_url)
+            if doi in already_crawled_dois :
+                print(f'DOI already crawled: {doi}')
+            else :
+                ikey = bib['ID']    # get ID to find url
+                # TODO: authors
+                author = bib['author'].replace('{', '').replace('}', '').split(' and ')
+                author = [a.strip()for a in author]
+                # TODO: abstract
+                abstract = bib['abstract']
+                # TODO: title
+                title = bib['title']
+                # TODO: year
+                year = bib['year']
+                # TODO: keywords
+                keywords = bib['keywords'].split(';')
+                # TODO: journal ( conference )
+                published = ''
+                if entrytype == 'articles' :
+                    published = bib['journal']
+                elif entrytype == 'inproceedings' :
+                    published = bib['booktitle']
+                # TODO: volume
+                # 그냥 bib에 존재하는 데이터 다 data로 때려 박을까?
 
-                ref_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-reference-link-viewArticle')]
-                refs_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-crossRef')]
-                refs_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-accessAcm')]
-                #print(ref_links_ieee)
-                refs_ieee = get_ieee_dois_of_ref(ref_links_ieee)
-                refs = refs_ieee + refs_acm + refs_cross
-                # TODO: with reference check module, get dois of ref_links_ieee
-                with open('log.txt', 'a') as f:
-                    f.write(f'[SUCCESS] {doi} ref\n')
-            else:
-                with open('log.txt', 'a') as f:
-                    f.write(f'[FAIL] {doi} ref\n')
-                fail_count += 1
+                # TODO: to distinguish from chi data, please change location
+                filepath = f"crawled/{doi}.txt"
+                if pathlib.Path(filepath).exists():
+                    print(f'[PASS] {doi}')
+                    continue
 
-            # get citation data
-            cite_url = f'https://ieeexplore.ieee.org/document/{ikey}/citations#citations'
-            #print(cite_url)
-            cites = []
-            response = requests.get(cite_url)
-            if response.ok:
-                browser.implicitly_wait(3)
-                browser.get(cite_url)
+                # Get reference data
+                ref_url = f'https://ieeexplore.ieee.org/document/{ikey}/references#references'
+                #print(ref_url)
+                response = requests.get(ref_url)
+                refs = []
+                if response.ok:
+                    browser.implicitly_wait(3)
+                    browser.get(ref_url)
 
-                cite_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-citations-link-viewArticle')]
-                cites_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-citations-link-crossRef')]
-                cites_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-citations-link-accessAcm')]
-                    
-                # TODO: with reference check module, get dois of cite_links_ieee
-                cites_ieee = get_ieee_dois_of_ref(cite_links_ieee)
-                #print(cites_ieee)
-                #print(cites_cross)
-                #print(cites_acm)
-                cites = cites_ieee + cites_acm + cites_cross
-                with open('log.txt', 'a') as f:
-                    f.write(f'[SUCCESS] {doi} cite\n')
-            else:
-                with open('log.txt', 'a') as f:
-                    f.write(f'[FAIL] {doi} cite\n')
-                fail_count += 1
-            if fail_count >= 3:
-                break
+                    ref_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-reference-link-viewArticle')]
+                    refs_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-crossRef')]
+                    refs_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-accessAcm')]
+                    #print(ref_links_ieee)
+                    refs_ieee = get_ieee_dois_of_ref(ref_links_ieee)
+                    refs = refs_ieee + refs_acm + refs_cross
+                    # TODO: with reference check module, get dois of ref_links_ieee
+                    with open('log.txt', 'a') as f:
+                        f.write(f'[SUCCESS] {doi} ref\n')
+                else:
+                    with open('log.txt', 'a') as f:
+                        f.write(f'[FAIL] {doi} ref\n')
+                    fail_count += 1
 
-            data[doi] = {
-                "doi": doi,
-                "author": author,
-                "title": title,
-                "year": year,
-                "abstract": abstract,
-                "keywords": keywords,
-                "referenced_by": cites, 
-                "referencing": refs,
-            }
+                # get citation data
+                cite_url = f'https://ieeexplore.ieee.org/document/{ikey}/citations#citations'
+                #print(cite_url)
+                cites = []
+                response = requests.get(cite_url)
+                if response.ok:
+                    browser.implicitly_wait(3)
+                    browser.get(cite_url)
+
+                    cite_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-citations-link-viewArticle')]
+                    cites_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-citations-link-crossRef')]
+                    cites_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-citations-link-accessAcm')]
+                        
+                    # TODO: with reference check module, get dois of cite_links_ieee
+                    cites_ieee = get_ieee_dois_of_ref(cite_links_ieee)
+                    #print(cites_ieee)
+                    #print(cites_cross)
+                    #print(cites_acm)
+                    cites = cites_ieee + cites_acm + cites_cross
+                    with open('log.txt', 'a') as f:
+                        f.write(f'[SUCCESS] {doi} cite\n')
+                else:
+                    with open('log.txt', 'a') as f:
+                        f.write(f'[FAIL] {doi} cite\n')
+                    fail_count += 1
+                if fail_count >= 3:
+                    break
+
+                data[doi] = {
+                    "doi": doi,
+                    "author": author,
+                    "title": title,
+                    "year": year,
+                    "abstract": abstract,
+                    "keywords": keywords,
+                    "referenced_by": cites, 
+                    "referencing": refs,
+                }
+
+                outfile_path = './vis_data/'
+                outfile_name = bibpath.split('\\')[1].split('.')[0]
+                with open(outfile_path+outfile_name+'.json', 'w', encoding='utf8') as outfile :
+                    json.dump(data, outfile)
             
             time.sleep(random.randint(5, 10))
     
     browser.quit()
 
-    outfile_path = './vis_data/'
-    outfile_name = bibpath.split('\\')[1].split('.')[0]
-    with open(outfile_path+outfile_name+'.json', 'w', encoding='utf8') as outfile :
-        json.dump(data, outfile)
 
 
 
 
 
 if __name__ == "__main__":
-    bibpaths = glob('./vis_bib/*.bib')
+    bibpaths = glob('./vis_bibtex/*.bib')
     #print(bibpaths)
     for bibpath in bibpaths:
         crawl(bibpath)
