@@ -68,9 +68,11 @@ def crawl(bibpath):
                 browser.implicitly_wait(3)
                 browser.get(ref_url)
 
-                refs_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-reference-link-viewArticle')]
+                ref_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-reference-link-viewArticle')]
                 refs_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-crossRef')]
                 refs_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-reference-link-accessAcm')]
+                
+                # TODO: with reference check module, get dois of ref_links_ieee
                 with open('log.txt', 'a') as f:
                     f.write(f'[SUCCESS] {doi} ref\n')
             else:
@@ -86,11 +88,11 @@ def crawl(bibpath):
                 browser.implicitly_wait(3)
                 browser.get(cite_url)
 
-                cites_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-citations-link-viewArticle')]
+                cite_links_ieee = [elem.get_attribute('href') for elem in browser.find_elements_by_class_name('stats-citations-link-viewArticle')]
                 cites_cross = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-citations-link-crossRef')]
                 cites_acm = [elem.get_attribute('href').split('doi.org/')[1] for elem in browser.find_elements_by_class_name('stats-citations-link-accessAcm')]
                     
-
+                # TODO: with reference check module, get dois of cite_links_ieee
                 #print(cites_ieee)
                 #print(cites_cross)
                 #print(cites_acm)
