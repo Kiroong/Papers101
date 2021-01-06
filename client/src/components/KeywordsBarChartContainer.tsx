@@ -19,9 +19,12 @@ const KeywordsBarChartContainer: React.FC<Props> = ({ targetPapers }) => {
       extractKeywords(entry.title + " " + entry.abstract).forEach((word) =>
         count[word] ? (count[word] += 1) : (count[word] = 1)
       );
-      entry.keywords.map(word => word.toLocaleLowerCase()).forEach((word) =>
-        count[word] ? (count[word] += 1) : (count[word] = 1)
-      );
+      entry.keywords
+        .map((word) => word.toLocaleLowerCase().split(" "))
+        .reduce((a, b) => a.concat(b), [])
+        .forEach((word) =>
+          count[word] ? (count[word] += 1) : (count[word] = 1)
+        );
     });
     return Object.entries(count)
       .sort((a, b) => b[1] - a[1])
@@ -31,7 +34,7 @@ const KeywordsBarChartContainer: React.FC<Props> = ({ targetPapers }) => {
         count,
         isSelected: userInputKeywords
           .map((keyword, index) => ({ keyword, index }))
-          .find(({keyword, index}) => keyword.split(" ").includes(word))
+          .find(({ keyword, index }) => keyword.split(" ").includes(word)),
       }));
   }, [userInputKeywords, targetPapers]);
   const container = useRef<HTMLDivElement>(null);

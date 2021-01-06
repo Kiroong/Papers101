@@ -2,6 +2,7 @@ export interface PaperEntry {
   abstract: string;
   author: string[];
   doi: string;
+  conference: string;
   keywords: string[];
   referencedBy: string[];
   referencing: string[];
@@ -12,6 +13,7 @@ export interface PaperEntry {
   numReferencing: number;
   // ============= //
   recentlyPublished: number;
+  citation: number;
   keywordSims: number[];
   seedPaperSims: number[];
   referencedBySeedPapers: number[];
@@ -22,6 +24,9 @@ export interface PaperEntry {
 
 export interface Weights {
   recentlyPublished: {
+    maxVal: number;
+  };
+  citation: {
     maxVal: number;
   };
   keywordSimilarity: {

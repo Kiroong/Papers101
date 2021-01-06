@@ -16,6 +16,9 @@ const defaultOverviewState: OverviewState = {
     recentlyPublished: {
       maxVal: 0.5,
     },
+    citation: {
+      maxVal: 0.5,
+    },
     keywordSimilarity: {
       maxVal: 1,
       components: [],
@@ -46,10 +49,10 @@ function updateSortedPaperEntries(
     if (updateKeywordSims) {
       const keywordSims = state.keywords.map((keyword) =>
         keyword
-          .split(" ")
+          .split("zxcvzxxc")
           .map(
             (word) =>
-              (entry.title + entry.abstract)
+              (entry.title + ' ' + entry.abstract)
                 .toLowerCase()
                 .split(word.toLowerCase()).length - 1
           )
@@ -98,6 +101,9 @@ function updateSortedPaperEntries(
   const recentlyPublishedMax = updated
     .map((entry) => entry.recentlyPublished)
     .reduce((a, b) => Math.max(a, b), 0);
+  const citationMax = updated
+    .map((entry) => entry.numReferenced)
+    .reduce((a, b) => Math.max(a, b), 0);
   const keywordSimsMaxOfSum = maxOfSum(
     updated.map((entry) => entry.keywordSims)
   );
@@ -115,6 +121,7 @@ function updateSortedPaperEntries(
   const normalized = updated.map((entry) => ({
     ...entry,
     recentlyPublished: entry.recentlyPublished / recentlyPublishedMax,
+    citation: entry.numReferenced / citationMax,
     keywordSims: entry.keywordSims.map((sim) => sim / keywordSimsMaxOfSum),
     seedPaperSims: entry.seedPaperSims.map(
       (sim) => sim / seedPaperSimsMaxOfSum
@@ -134,6 +141,7 @@ function updateSortedPaperEntries(
     ...entry,
     score:
       entry.recentlyPublished * state.weights.recentlyPublished.maxVal +
+      entry.citation * state.weights.citation.maxVal +
       inner(
         entry.keywordSims,
         state.weights.keywordSimilarity.components.map(

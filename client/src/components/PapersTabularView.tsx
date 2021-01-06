@@ -85,7 +85,7 @@ const PapersTabularView: React.FC = () => {
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
-  const weightsHash = `${weights.recentlyPublished.maxVal}:${weights.keywordSimilarity.maxVal}:${weights.seedPaperSimilarity.maxVal}:${weights.referencedBySeedPapers.maxVal}:${weights.referencesSeedPapers.maxVal}`;
+  const weightsHash = `${weights.recentlyPublished.maxVal}:${weights.citation.maxVal}:${weights.keywordSimilarity.maxVal}:${weights.seedPaperSimilarity.maxVal}:${weights.referencedBySeedPapers.maxVal}:${weights.referencesSeedPapers.maxVal}`;
 
   const hoveredEntry = useRootSelector((state) => state.ui.hoveredEntry);
   const setHoveredEntry = (entry: PaperEntry) => {
@@ -160,7 +160,9 @@ const PapersTabularView: React.FC = () => {
                 columns={[
                   "auto",
                   "4fr",
+                  "auto",
                   `${weights.recentlyPublished.maxVal}fr`,
+                  `${weights.citation.maxVal}fr`,
                   `${weights.keywordSimilarity.maxVal}fr`,
                   `${weights.seedPaperSimilarity.maxVal}fr`,
                   `${weights.referencedBySeedPapers.maxVal}fr`,
@@ -169,6 +171,7 @@ const PapersTabularView: React.FC = () => {
               >
                 <div>Rank</div>
                 <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
+                <div style={{ paddingLeft: 5, paddingRight: 5 }}>Conference</div>
                 <div
                   style={{
                     paddingLeft: 5,
@@ -176,6 +179,14 @@ const PapersTabularView: React.FC = () => {
                   }}
                 >
                   Year
+                </div>
+                <div
+                  style={{
+                    paddingLeft: 5,
+                    paddingRight: 5,
+                  }}
+                >
+                  Cited By
                 </div>
                 <div
                   style={{
@@ -244,6 +255,21 @@ const PapersTabularView: React.FC = () => {
                         style={{
                           paddingLeft: 5,
                           paddingRight: 5,
+                          textAlign: "center",
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        {entry.conference}
+                      </div>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
                           backgroundColor:
                             hoveredEntry?.doi === entry.doi
                               ? "rgba(0,0,255,0.1)"
@@ -258,6 +284,28 @@ const PapersTabularView: React.FC = () => {
                             color={[d3.schemeReds[9][1]]}
                           />
                           <Text size="xsmall">{entry.year}</Text>
+                        </Stack>
+                      </div>
+                      <div
+                        onMouseOver={() => setHoveredEntry(entry)}
+                        onClick={() => setSelectedEntry(entry)}
+                        style={{
+                          paddingLeft: 5,
+                          paddingRight: 5,
+                          backgroundColor:
+                            hoveredEntry?.doi === entry.doi
+                              ? "rgba(0,0,255,0.1)"
+                              : "white",
+                        }}
+                      >
+                        <Stack fill={true} anchor="left">
+                          <SimilaritiesBar
+                            key={weightsHash}
+                            similarities={[entry.citation]}
+                            maxOfSum={1}
+                            color={[d3.schemeReds[9][1]]}
+                          />
+                          <Text size="xsmall">{entry.numReferenced}</Text>
                         </Stack>
                       </div>
                       <div

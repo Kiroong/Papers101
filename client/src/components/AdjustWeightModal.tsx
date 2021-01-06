@@ -16,7 +16,8 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
   return (
     <Box direction="column" pad="medium">
       <Grid columns={["1fr", "1fr"]} gap="small">
-        <div>Recently Published</div>
+
+        <div>Year</div>
         <input
           type="number"
           value={weights.recentlyPublished.maxVal}
@@ -25,6 +26,21 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
               ...weights,
               recentlyPublished: {
                 ...weights.recentlyPublished,
+                maxVal: +e.target.value,
+              },
+            })
+          }
+        />
+
+        <div>Cited By</div>
+        <input
+          type="number"
+          value={weights.citation.maxVal}
+          onChange={(e) =>
+            setWeights({
+              ...weights,
+              citation: {
+                ...weights.citation,
                 maxVal: +e.target.value,
               },
             })
@@ -45,7 +61,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
             })
           }
         />
-        {weights.keywordSimilarity.components.map(({ keyword, weight }, i) => (
+        {/* {weights.keywordSimilarity.components.map(({ keyword, weight }, i) => (
           <>
             <div style={{ paddingLeft: 40 }}>{keyword}</div>
             <input
@@ -70,7 +86,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
               }
             />
           </>
-        ))}
+        ))} */}
 
         <div>Seed paper Similarities</div>
         <input
@@ -86,7 +102,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
             })
           }
         />
-        {weights.seedPaperSimilarity.components.map(({ entry, weight }, i) => (
+        {/* {weights.seedPaperSimilarity.components.map(({ entry, weight }, i) => (
           <>
             <div
               style={{
@@ -120,7 +136,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
               }
             />
           </>
-        ))}
+        ))} */}
 
         <div>Referenced by Seed papers</div>
         <input
@@ -136,7 +152,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
             })
           }
         />
-        {weights.referencedBySeedPapers.components.map(
+        {/* {weights.referencedBySeedPapers.components.map(
           ({ entry, weight }, i) => (
             <>
               <div
@@ -172,7 +188,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
               />
             </>
           )
-        )}
+        )} */}
 
         <div>References Seed papers</div>
         <input
@@ -188,7 +204,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
             })
           }
         />
-        {weights.referencesSeedPapers.components.map(({ entry, weight }, i) => (
+        {/* {weights.referencesSeedPapers.components.map(({ entry, weight }, i) => (
           <>
             <div
               style={{
@@ -222,7 +238,7 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
               }
             />
           </>
-        ))}
+        ))} */}
       </Grid>
       <Box fill={true} justify="center" margin={{ top: "small" }}>
         <Button
