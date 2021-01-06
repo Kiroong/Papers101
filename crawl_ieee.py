@@ -58,16 +58,20 @@ def crawl(bibpath):
         dois = []
         # print(ref_links)
         for url in ref_links:
-            print(url)
-            response = requests.get(url)
-            if response.ok:
-                browser.implicitly_wait(3)
-                browser.get(url)
-                try :
-                    doi_elem = browser.find_element_by_class_name('stats-document-abstract-doi').find_element_by_tag_name('a')
-                    dois.append(doi_elem.text)
-                except :
-                    print('no such paper: '+ url)
+            try:
+                dois.append("IKEY:" + url.split('/document/')[1])
+            except:
+                pass
+            # print(url)
+            # response = requests.get(url)
+            # if response.ok:
+            #     browser.implicitly_wait(3)
+            #     browser.get(url)
+            #     try :
+            #         doi_elem = browser.find_element_by_class_name('stats-document-abstract-doi').find_element_by_tag_name('a')
+            #         dois.append(doi_elem.text)
+            #     except :
+            #         print('no such paper: '+ url)
         # print(dois)
         return dois
 
@@ -76,7 +80,7 @@ def crawl(bibpath):
     # open bib file
 
     outfile_path = './vis_data/'
-    outfile_name = bibpath.split('\\')[1].split('.')[0]
+    outfile_name = bibpath.split('/')[1].split('.')[0]
 
     with open(bibpath, 'r', encoding='utf8') as bibfile :
 
@@ -90,7 +94,7 @@ def crawl(bibpath):
 
         fail_count = 0
         for bib in bibs.entries :
-            #print(bib)
+            # print(bib)
             entrytype = bib['ENTRYTYPE']
             doi = bib['doi']    # get doi which is used as primary key
 
@@ -102,6 +106,7 @@ def crawl(bibpath):
 
             if doi in already_crawled_dois :
                 print(f'DOI already crawled: {doi}')
+                continue
             else :
                 ikey = bib['ID']    # get ID to find url
                 # TODO: authors
@@ -130,6 +135,7 @@ def crawl(bibpath):
                     print(f'[PASS] {doi}')
                     continue
 
+                # print(5)
                 # Get reference data
                 ref_url = f'https://ieeexplore.ieee.org/document/{ikey}/references#references'
                 #print(ref_url)
@@ -180,6 +186,7 @@ def crawl(bibpath):
                     fail_count += 1
                 if fail_count >= 3:
                     break
+                
 
                 data[doi] = {
                     "doi": doi,
@@ -193,7 +200,7 @@ def crawl(bibpath):
                 }
 
                 outfile_path = './vis_data/'
-                outfile_name = bibpath.split('\\')[1].split('.')[0]
+                outfile_name = bibpath.split('/')[1].split('.')[0]
                 with open(outfile_path+outfile_name+'.json', 'w', encoding='utf8') as outfile :
                     json.dump(data, outfile)
             
