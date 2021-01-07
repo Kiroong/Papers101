@@ -334,7 +334,7 @@ const HistoryLink: React.FC<Props> = ({
                                             }
                                             on={["hover"]}
                                         >
-                                            Changed weight
+                                            Changed weight or filter
                                         </Popup>
 
                                     ) : <div />

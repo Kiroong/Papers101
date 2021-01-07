@@ -25,6 +25,7 @@ import AdjustWeightModal from "./AdjustWeightModal";
 import HistoryLink from "./HistoryLinkRev";
 import SimilaritiesBar from "./SimilaritiesBar";
 import TitleBox from "./TitleBox";
+import AdjustFilterModal from "./AdjustFilterModal";
 
 const PapersTabularView: React.FC = () => {
   const histories = useRootSelector((state) => [
@@ -103,6 +104,7 @@ const PapersTabularView: React.FC = () => {
 
   const dispatch = useThunkDispatch();
   const [showWeightModal, setShowWeightModal] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
   return (
     <Card
@@ -114,6 +116,7 @@ const PapersTabularView: React.FC = () => {
       <CardHeader pad="small">
         <Box direction="row" gap="small" align="baseline">
           <Heading level="4">Papers</Heading>
+
           <Button
             color="blue"
             onClick={() => {
@@ -130,6 +133,24 @@ const PapersTabularView: React.FC = () => {
               <AdjustWeightModal onClose={() => setShowWeightModal(false)} />
             </Layer>
           )}
+
+          <Button
+            color="blue"
+            onClick={() => {
+              setShowFilterModal(true);
+            }}
+          >
+            Filter
+          </Button>
+          {showFilterModal && (
+            <Layer
+              onEsc={() => setShowFilterModal(false)}
+              onClickOutside={() => setShowFilterModal(false)}
+            >
+              <AdjustFilterModal onClose={() => setShowFilterModal(false)} />
+            </Layer>
+          )}
+
         </Box>
       </CardHeader>
       <CardBody pad="small" gap="small">

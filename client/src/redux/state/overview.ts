@@ -48,6 +48,7 @@ export interface Weights {
 }
 
 export interface OverviewState {
+  originalPaperEntries: PaperEntry[];
   paperEntries: PaperEntry[];
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
@@ -57,4 +58,14 @@ export interface OverviewState {
 
   //==============//
   seedPaperSimsCache: { [doi: string]: { [doi: string]: number } };
+  // ============ //
+  filter: EntryFilter | null;
+}
+
+export interface EntryFilter {
+  year: {
+    from: number,
+    to: number,
+  },
+  authors: string[],
 }

@@ -6,6 +6,7 @@ import { ReducibleAction } from "../action/root-action";
 import { OverviewState, PaperEntry } from "../state/overview";
 
 const defaultOverviewState: OverviewState = {
+  originalPaperEntries: [],
   paperEntries: [],
   keywords: [],
   seedPapers: [],
@@ -36,6 +37,7 @@ const defaultOverviewState: OverviewState = {
       components: [],
     },
   },
+  filter: null,
 };
 
 function updateSortedPaperEntries(
@@ -43,7 +45,23 @@ function updateSortedPaperEntries(
   updateKeywordSims: boolean,
   updateSeedPaperSims: boolean
 ) {
-  const updated = state.paperEntries.map((entry) => {
+  let filtered = state.paperEntries;
+  if (state.filter) {
+    filtered = state.originalPaperEntries.filter(entry => state.filter!.year.from <= entry.year && entry.year <= state.filter!.year.to);
+    if (state.filter!.authors.length) {
+      filtered = filtered.filter(entry => {
+        for(const author of state.filter!.authors) {
+          if (entry.author.includes(author)) {
+            return true;
+          }
+        }
+        return false;
+      })
+    }
+    updateKeywordSims = true;
+    updateSeedPaperSims = true;
+  }
+  const updated = filtered.map((entry) => {
     const seedPaperSimsCache = state.seedPaperSimsCache; // going to mutate it as it's cache
     let newEntry = { ...entry };
     if (updateKeywordSims) {
@@ -202,6 +220,7 @@ export const overviewReducer = (
       }));
       const nextState = {
         ...state,
+        originalPaperEntries: paperEntries,
         paperEntries,
       };
       return {
@@ -296,5 +315,18 @@ export const overviewReducer = (
     }
     default:
       return state;
+    case getType(actionOverview.setFilter):
+      {
+        const filter = action.payload;
+        const nextState: OverviewState = {
+          ...state,
+          filter,
+          histories: [...state.histories, state],
+        }
+        return {
+          ...nextState,
+          paperEntries: updateSortedPaperEntries(nextState, false, false),
+        }
+      }
   }
 };

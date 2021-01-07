@@ -1,5 +1,5 @@
 import { createAction } from "typesafe-actions";
-import { OverviewState, PaperEntry, Weights } from "../state/overview";
+import { EntryFilter, OverviewState, PaperEntry, Weights } from "../state/overview";
 import { getData } from "./api/api";
 import { makeThunk } from "./utils";
 
@@ -28,6 +28,11 @@ const unitActions = {
     "OVERVIEW/SELECT_HISTORY",
     (history: OverviewState) => history
   )(),
+  setFilter: createAction(
+    "OVERVIEW/SET_FILTER",
+    (filter: EntryFilter | null) => filter
+  )(),
+
 };
 
 const thunkActions = {
