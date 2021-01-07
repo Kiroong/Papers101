@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import React from "react";
 import {
   Box,
@@ -14,11 +15,18 @@ import {
 import { useRootSelector } from "../redux/state/root-state";
 import { useThunkDispatch } from "../redux/action/root-action";
 import { actionOverview } from "../redux/action/overview-actions";
+import DescriptionCard from "./DescriptionCard";
 
 const PaperDetailView = () => {
   const entry = useRootSelector((state) => state.ui.selectedEntry);
+  const keywords = useRootSelector((state) => state.overview.keywords);
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const dispatch = useThunkDispatch();
+  const tagColors = {} as { [keyword: string]: string };
+  keywords.forEach(
+    (keyword, i) => (tagColors[keyword] = d3.schemeTableau10[Math.min(i, 9)])
+  );
+
   if (!entry) {
     return <Card />;
   }
@@ -53,9 +61,19 @@ const PaperDetailView = () => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell scope="row">Keywords</TableCell>
+                  <TableCell>
+                    <Text>{entry.keywords.join("; ")}</Text>
+                  </TableCell>
+                </TableRow>
+
+                <TableRow>
                   <TableCell scope="row">Abstract</TableCell>
                   <TableCell>
-                    <Text>{entry.abstract}</Text>
+                    <DescriptionCard
+                      description={entry.abstract}
+                      tagColors={tagColors}
+                    />
                   </TableCell>
                 </TableRow>
               </TableBody>
