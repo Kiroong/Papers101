@@ -66,7 +66,7 @@ function updateSortedPaperEntries(
     let newEntry = { ...entry };
     if (updateKeywordSims) {
       const keywordSims = state.keywords.map((keyword) =>
-        keyword
+        Math.min(5, keyword
           .split("zxcvzxxc")
           .map(
             (word) =>
@@ -74,7 +74,7 @@ function updateSortedPaperEntries(
                 .toLowerCase()
                 .split(word.toLowerCase()).length - 1
           )
-          .reduce((a, b) => a + b)
+          .reduce((a, b) => a + b)) / 5
       );
       newEntry = { ...newEntry, keywordSims };
     }
