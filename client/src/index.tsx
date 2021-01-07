@@ -8,10 +8,14 @@ import { rootReducer } from "./redux/reducer/root-reducer";
 import thunkMiddleware from "redux-thunk";
 import { createLogger } from "redux-logger";
 import { Provider } from "react-redux";
+import { getType } from "typesafe-actions";
+import { setHoveredEntry } from "./redux/action/root-action";
 
 const store = createStore(
   rootReducer,
-  applyMiddleware(thunkMiddleware, createLogger())
+  applyMiddleware(thunkMiddleware, createLogger({
+    predicate: (getState, action) => action.type !== getType(setHoveredEntry)
+  }))
 );
 
 ReactDOM.render(

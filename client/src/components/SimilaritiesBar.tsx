@@ -4,9 +4,11 @@ import React, { useLayoutEffect, useRef, useState } from "react";
 interface Props {
   similarities: number[];
   maxOfSum: number;
+  color: readonly string[];
 }
 
-const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum }) => {
+const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum, color }) => {
+  similarities = similarities.map(sim => Math.abs(sim));
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);
@@ -20,7 +22,7 @@ const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum }) => {
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
+        justifyContent: "start",
         width: "100%",
         height: "100%",
       }}
@@ -34,8 +36,7 @@ const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum }) => {
               marginTop: height * 0.25,
               height: height * 0.5,
               width: (sim / maxOfSum) * width * 0.8,
-              marginLeft: i ? 0 : (sim / maxOfSum) * width * 0.1,
-              backgroundColor: d3.schemeTableau10[Math.min(9, i)],
+              backgroundColor: color[Math.min(color.length-1, i)],
             }}
           />
         ))}

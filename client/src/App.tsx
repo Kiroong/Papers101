@@ -3,18 +3,20 @@ import "./App.scss";
 import Overview from "./components/Overview";
 import {
   Header,
-  HeaderName
+  HeaderName,
 } from "carbon-components-react/lib/components/UIShell";
 
 function App() {
   return (
     <div className="App" style={{ height: "100%" }}>
-      <Header aria-label="CHIpotle">
-      <HeaderName href="#" prefix="">
-        CHIPotle
-      </HeaderName>
-    </Header>
-      <Overview />
+      <Header aria-label="Papers101">
+        <HeaderName href="#" prefix="">
+          Papers101
+        </HeaderName>
+      </Header>
+      <div style={{ height: "100%", marginTop: "48px" }}>
+        <Overview />
+      </div>
     </div>
   );
 }

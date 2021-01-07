@@ -2,6 +2,7 @@ export interface PaperEntry {
   abstract: string;
   author: string[];
   doi: string;
+  conference: string;
   keywords: string[];
   referencedBy: string[];
   referencing: string[];
@@ -11,6 +12,8 @@ export interface PaperEntry {
   numReferenced: number;
   numReferencing: number;
   // ============= //
+  recentlyPublished: number;
+  citation: number;
   keywordSims: number[];
   seedPaperSims: number[];
   referencedBySeedPapers: number[];
@@ -20,6 +23,12 @@ export interface PaperEntry {
 }
 
 export interface Weights {
+  recentlyPublished: {
+    maxVal: number;
+  };
+  citation: {
+    maxVal: number;
+  };
   keywordSimilarity: {
     maxVal: number;
     components: { keyword: string; weight: number }[];
@@ -39,6 +48,7 @@ export interface Weights {
 }
 
 export interface OverviewState {
+  originalPaperEntries: PaperEntry[];
   paperEntries: PaperEntry[];
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
@@ -48,4 +58,14 @@ export interface OverviewState {
 
   //==============//
   seedPaperSimsCache: { [doi: string]: { [doi: string]: number } };
+  // ============ //
+  filter: EntryFilter | null;
+}
+
+export interface EntryFilter {
+  year: {
+    from: number,
+    to: number,
+  },
+  authors: string[],
 }

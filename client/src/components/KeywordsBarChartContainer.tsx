@@ -1,27 +1,27 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { actionOverview } from "../redux/action/overview-actions";
 import { useThunkDispatch } from "../redux/action/root-action";
+import { PaperEntry } from "../redux/state/overview";
 import { useRootSelector } from "../redux/state/root-state";
 import { extractKeywords } from "../utils";
 import KeywordsBarChart from "./KeywordsBarChart";
 
-interface Props {}
+interface Props {
+  targetPapers: PaperEntry[];
+}
 
-const KeywordsBarChartContainer: React.FC<Props> = () => {
+const KeywordsBarChartContainer: React.FC<Props> = ({ targetPapers }) => {
   const dispatch = useThunkDispatch();
   const userInputKeywords = useRootSelector((state) => state.overview.keywords);
-  const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const wordCounts = useMemo(() => {
     const count = {} as { [word: string]: number };
-    seedPapers.forEach((entry) => {
+    targetPapers.forEach((entry) => {
       extractKeywords(entry.title + " " + entry.abstract).forEach((word) =>
         count[word] ? (count[word] += 1) : (count[word] = 1)
       );
-      entry.keywords.forEach((word) =>
-        count[word] ? (count[word] += 1) : (count[word] = 1)
-      );
-      entry.title
-        .split(" ")
+      entry.keywords
+        .map((word) => word.toLocaleLowerCase().split(" "))
+        .reduce((a, b) => a.concat(b), [])
         .forEach((word) =>
           count[word] ? (count[word] += 1) : (count[word] = 1)
         );
@@ -34,10 +34,9 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
         count,
         isSelected: userInputKeywords
           .map((keyword, index) => ({ keyword, index }))
-          .find(({keyword, index}) => keyword.split(" ").includes(word))
+          .find(({ keyword, index }) => keyword.split(" ").includes(word)),
       }));
-  }, [userInputKeywords, seedPapers]);
-  console.log({ wordCounts });
+  }, [userInputKeywords, targetPapers]);
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   useLayoutEffect(() => {
@@ -47,6 +46,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
   });
   return (
     <div
+      className="styled-scroll"
       style={{ height: "100%", width: "100%", overflowY: "scroll" }}
       ref={container}
     >
@@ -56,7 +56,7 @@ const KeywordsBarChartContainer: React.FC<Props> = () => {
           userInputKeywords={userInputKeywords}
           wordCounts={wordCounts}
           onClick={(keyword: string) => {
-            if (userInputKeywords.includes(keyword)) {
+            if (userInputKeywords.includes(keyword.toLocaleLowerCase())) {
               dispatch(
                 actionOverview.setKeywords(
                   userInputKeywords.filter((k) => k !== keyword)
