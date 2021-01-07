@@ -8,6 +8,7 @@ interface Props {
 }
 
 const SimilaritiesBar: React.FC<Props> = ({ similarities, maxOfSum, color }) => {
+  similarities = similarities.map(sim => Math.abs(sim));
   const container = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   const [height, setHeight] = useState<number | null>(null);

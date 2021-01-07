@@ -161,12 +161,12 @@ const PapersTabularView: React.FC = () => {
                   "auto",
                   "4fr",
                   "auto",
-                  `${weights.recentlyPublished.maxVal}fr`,
-                  `${weights.citation.maxVal}fr`,
-                  `${weights.keywordSimilarity.maxVal}fr`,
-                  `${weights.seedPaperSimilarity.maxVal}fr`,
-                  `${weights.referencedBySeedPapers.maxVal}fr`,
-                  `${weights.referencesSeedPapers.maxVal}fr`,
+                  `${Math.abs(weights.recentlyPublished.maxVal)}fr`,
+                  `${Math.abs(weights.citation.maxVal)}fr`,
+                  `${Math.abs(weights.keywordSimilarity.maxVal)}fr`,
+                  `${Math.abs(weights.seedPaperSimilarity.maxVal)}fr`,
+                  `${Math.abs(weights.referencedBySeedPapers.maxVal)}fr`,
+                  `${Math.abs(weights.referencesSeedPapers.maxVal)}fr`,
                 ]}
               >
                 <div>Rank</div>

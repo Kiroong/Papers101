@@ -190,7 +190,7 @@ export const overviewReducer = (
     case getType(actionOverview.getData.complete):
       const paperEntries = action.payload.map((entry) => ({
         ...entry,
-        recentlyPublished: Math.min(10, entry.year - 2010),
+        recentlyPublished: entry.year - 1980,
         referencedBy: entry.referenced_by,
         numReferencing: entry.referencing.length,
         numReferenced: entry.referenced_by.length,
