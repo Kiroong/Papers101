@@ -93,8 +93,8 @@ const PapersTabularView: React.FC = () => {
   const weightsHash = `${weights.recentlyPublished.weight}:${weights.citation.weight}:${weights.keywordSimilarity.weight}:${weights.seedPaperSimilarity.weight}:${weights.referencedBySeedPapers.weight}:${weights.referencesSeedPapers.weight}`;
 
   const hoveredEntry = useRootSelector((state) => state.ui.hoveredEntry);
-  const setHoveredEntry = (entry: PaperEntry) => {
-    if (hoveredEntry?.doi !== entry.doi) {
+  const setHoveredEntry = (entry: PaperEntry | null) => {
+    if (hoveredEntry?.doi !== entry?.doi) {
       dispatch(_setHoveredEntry(entry));
     }
   };
@@ -331,6 +331,7 @@ const PapersTabularView: React.FC = () => {
                     <>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -346,6 +347,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <TitleBox
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           backgroundColor:
@@ -357,6 +359,7 @@ const PapersTabularView: React.FC = () => {
                       />
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -372,6 +375,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -394,6 +398,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -416,6 +421,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -435,6 +441,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -454,6 +461,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,
@@ -473,6 +481,7 @@ const PapersTabularView: React.FC = () => {
                       </div>
                       <div
                         onMouseOver={() => setHoveredEntry(entry)}
+                        onMouseOut={() => setHoveredEntry(null)}
                         onClick={() => setSelectedEntry(entry)}
                         style={{
                           paddingLeft: 5,

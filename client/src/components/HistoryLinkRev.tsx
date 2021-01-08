@@ -229,7 +229,6 @@ const HistoryLink: React.FC<Props> = ({
     useEffect(() => {
         //console.log('hover')
 
-        if (hoveredEntry !== null) {
             const topKDois: string[] = histories[histories.length - 1].slice(0, topk).map(d => d.doi)
             const _root = d3
                 .select(root.current)
@@ -249,6 +248,7 @@ const HistoryLink: React.FC<Props> = ({
                     }
                 })
                 
+        if (hoveredEntry !== null) {
             _root
                 .selectAll('.parallel')
                 .filter((d: any) => d.doi == hoveredEntry.doi)
