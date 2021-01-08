@@ -79,11 +79,8 @@ const PapersTabularView: React.FC = () => {
   const numHistories = 5;
   const seedPapers = useRootSelector((state) => state.overview.seedPapers);
   const keywords = useRootSelector((state) => state.overview.keywords);
-  const paperEntries = useRootSelector((state) =>
-    state.overview.paperEntries
-      .filter((entry) => !seedPapers.map((e) => e.doi).includes(entry.doi))
-      .slice(0, 30)
-  );
+  const forceAllKeywords = useRootSelector((state) => state.overview.forceAllKeywords);
+  const paperEntries = useRootSelector((state) => state.overview.paperEntriesToShow)
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
   const emptyWeights = {} as any;
@@ -163,12 +160,7 @@ const PapersTabularView: React.FC = () => {
         {histories.length > 1 ? (
           <Grid columns={["auto", "1fr"]} fill={true}>
             <HistoryLink
-              histories={histories.map((history) =>
-                history.paperEntries.filter(
-                  (entry) =>
-                    !history.seedPapers.map((e) => e.doi).includes(entry.doi)
-                )
-              )}
+              histories={histories.map((history) => history.paperEntriesToShow)}
               historiesDiff={historiesDiff}
               onSelectHistory={(historyIndex: number) => {
                 dispatch(actionOverview.selectHistory(histories[historyIndex]));

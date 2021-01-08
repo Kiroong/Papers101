@@ -46,12 +46,14 @@ export interface Weights {
 
 export interface OverviewState {
   originalPaperEntries: PaperEntry[];
+  paperEntriesToShow: PaperEntry[];
   paperEntries: PaperEntry[];
   markedPapers: PaperEntry[];
   seedPapers: PaperEntry[];
   keywords: string[];
   histories: OverviewState[];
   weights: Weights;
+  forceAllKeywords: boolean;
 
   //==============//
   seedPaperSimsCache: { [doi: string]: { [doi: string]: number } };

@@ -8,6 +8,7 @@ import { OverviewState, PaperEntry } from "../state/overview";
 const defaultOverviewState: OverviewState = {
   originalPaperEntries: [],
   paperEntries: [],
+  paperEntriesToShow: [], // post-filtered
   keywords: [],
   seedPapers: [],
   markedPapers: [],
@@ -23,6 +24,7 @@ const defaultOverviewState: OverviewState = {
     mode: null,
   },
   filter: null,
+  forceAllKeywords: false,
 };
 
 function updateSortedPaperEntries(
@@ -240,13 +242,21 @@ function updateSortedPaperEntries(
     })(),
   }));
 
+  let sorted: (typeof withScore);
   if (state.keywords.length === 0 && state.seedPapers.length === 0) {
-    return withScore;
+    sorted = withScore;
   } else {
-    const sorted = withScore.sort((a, b) =>
+    sorted = withScore.sort((a, b) =>
       a.score === b.score ? b.year - a.year : b.score - a.score
     );
-    return sorted;
+  }
+  return {
+    paperEntries: sorted,
+    paperEntriesToShow: sorted.filter(entry => {
+      return !state.seedPapers.map(p => p.doi).includes(entry.doi)
+      && (!state.forceAllKeywords || entry.keywordSims.reduce((a, b) => a * b, 1) > 0)
+    }).slice(0, 30)
+
   }
 }
 
@@ -275,7 +285,7 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, false),
+        ...updateSortedPaperEntries(nextState, false, false),
       };
     case getType(actionOverview.setKeywords): {
       const keywords = action.payload;
@@ -291,7 +301,7 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, true, false),
+        ...updateSortedPaperEntries(nextState, true, false),
       };
     }
     case getType(actionOverview.setSeedPapers): {
@@ -314,7 +324,7 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, true),
+        ...updateSortedPaperEntries(nextState, false, true),
         histories: [...state.histories, state],
       };
     }
@@ -342,11 +352,9 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, false),
+        ...updateSortedPaperEntries(nextState, false, false),
       };
     }
-    default:
-      return state;
     case getType(actionOverview.setFilter): {
       const filter = action.payload;
       const nextState: OverviewState = {
@@ -356,8 +364,21 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, false),
+        ...updateSortedPaperEntries(nextState, false, false),
       };
     }
+    case getType(actionOverview.setForceAllKeywords): {
+      const nextState = {
+        ...state,
+        forceAllKeywords: action.payload,
+        histories: [...state.histories, state],
+      }
+      return {
+        ...nextState,
+        ...updateSortedPaperEntries(nextState, false, false),
+      }
+    }
+    default:
+      return state;
   }
 };

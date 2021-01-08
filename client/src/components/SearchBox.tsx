@@ -6,6 +6,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  CheckBox,
   Form,
   Grid,
   Heading,
@@ -29,6 +30,9 @@ const SearchBox: React.FC = () => {
     state.overview.paperEntries.slice(0, 30)
   );
   const [targetPaperMode, setTargetPaperMode] = useState("from search result");
+  const forceAllKeywords = useRootSelector(
+    (state) => state.overview.forceAllKeywords
+  );
   const dispatch = useThunkDispatch();
 
   return (
@@ -39,10 +43,7 @@ const SearchBox: React.FC = () => {
       <CardBody pad="small" gap="small">
         <Box fill={true}>
           <Grid fill={true} rows={["2fr", "5fr"]}>
-            <div
-              style={{ overflowY: "scroll" }}
-              className="styled-scroll"
-            >
+            <div style={{ overflowY: "scroll" }} className="styled-scroll">
               <Box direction="row" align="baseline" gap="small">
                 <Heading level="5">Keywords</Heading>
                 <Button
@@ -53,6 +54,18 @@ const SearchBox: React.FC = () => {
                 >
                   clear
                 </Button>
+              </Box>
+              <Box direction="row" align="center" gap="small">
+                <CheckBox
+                  size={10}
+                  checked={forceAllKeywords}
+                  onChange={(e) =>
+                    dispatch(
+                      actionOverview.setForceAllKeywords(!forceAllKeywords)
+                    )
+                  }
+                />
+                Should contain all keywords
               </Box>
               <Form
                 onSubmit={() => {
@@ -111,7 +124,7 @@ const SearchBox: React.FC = () => {
                 </List>
               </Form>
             </div>
-            <Box fill={true} pad="small" gap="small" height={{ min: '0px' }}>
+            <Box fill={true} pad="small" gap="small" height={{ min: "0px" }}>
               <Heading level="5">Recommended</Heading>
               <RadioButtonGroup
                 margin={{ bottom: "small" }}

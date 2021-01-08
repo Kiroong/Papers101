@@ -19,12 +19,7 @@ const CitationRelationshipView = () => {
           seedPapers.filter((p) => p.doi !== entry.doi)
         )
       );
-      const index = withoutThis.paperEntries
-        .filter(
-          (entry) =>
-            !withoutThis.seedPapers.map((e) => e.doi).includes(entry.doi)
-        )
-        .filter((entry) => entry.keywordSims.reduce((a, b) => a * b, 1) > 0)
+      const index = withoutThis.paperEntriesToShow
         .map((p) => p.doi)
         .indexOf(entry.doi);
       console.log({ entry, withoutThis, index });
