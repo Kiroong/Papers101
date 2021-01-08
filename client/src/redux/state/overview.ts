@@ -24,27 +24,24 @@ export interface PaperEntry {
 
 export interface Weights {
   recentlyPublished: {
-    maxVal: number;
+    weight: number;
   };
   citation: {
-    maxVal: number;
+    weight: number;
   };
   keywordSimilarity: {
-    maxVal: number;
-    components: { keyword: string; weight: number }[];
+    weight: number;
   };
   seedPaperSimilarity: {
-    maxVal: number;
-    components: { entry: PaperEntry; weight: number }[];
+    weight: number;
   };
   referencedBySeedPapers: {
-    maxVal: number;
-    components: { entry: PaperEntry; weight: number }[];
+    weight: number;
   };
   referencesSeedPapers: {
-    maxVal: number;
-    components: { entry: PaperEntry; weight: number }[];
+    weight: number;
   };
+  mode: null | 'year' | 'year-ascending' | 'citation' | 'keyword' | 'seed' | 'referenced-by-seed' | 'references-seed';
 }
 
 export interface OverviewState {

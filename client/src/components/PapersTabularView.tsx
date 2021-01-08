@@ -86,7 +86,14 @@ const PapersTabularView: React.FC = () => {
   );
   const markedPapers = useRootSelector((state) => state.overview.markedPapers);
   const weights = useRootSelector((state) => state.overview.weights);
-  const weightsHash = `${weights.recentlyPublished.maxVal}:${weights.citation.maxVal}:${weights.keywordSimilarity.maxVal}:${weights.seedPaperSimilarity.maxVal}:${weights.referencedBySeedPapers.maxVal}:${weights.referencesSeedPapers.maxVal}`;
+  const emptyWeights = {} as any;
+  Object.entries(weights).forEach(([field, weight]) => {
+    emptyWeights[field] = {
+      ...weight,
+      maxVal: 0,
+    };
+  });
+  const weightsHash = `${weights.recentlyPublished.weight}:${weights.citation.weight}:${weights.keywordSimilarity.weight}:${weights.seedPaperSimilarity.weight}:${weights.referencedBySeedPapers.weight}:${weights.referencesSeedPapers.weight}`;
 
   const hoveredEntry = useRootSelector((state) => state.ui.hoveredEntry);
   const setHoveredEntry = (entry: PaperEntry) => {
@@ -117,7 +124,7 @@ const PapersTabularView: React.FC = () => {
         <Box direction="row" gap="small" align="baseline">
           <Heading level="4">Papers</Heading>
 
-          <Button
+          {/* <Button
             color="blue"
             onClick={() => {
               setShowWeightModal(true);
@@ -132,7 +139,7 @@ const PapersTabularView: React.FC = () => {
             >
               <AdjustWeightModal onClose={() => setShowWeightModal(false)} />
             </Layer>
-          )}
+          )} */}
 
           <Button
             color="blue"
@@ -150,7 +157,6 @@ const PapersTabularView: React.FC = () => {
               <AdjustFilterModal onClose={() => setShowFilterModal(false)} />
             </Layer>
           )}
-
         </Box>
       </CardHeader>
       <CardBody pad="small" gap="small">
@@ -182,21 +188,42 @@ const PapersTabularView: React.FC = () => {
                   "auto",
                   "4fr",
                   "auto",
-                  `${Math.abs(weights.recentlyPublished.maxVal)}fr`,
-                  `${Math.abs(weights.citation.maxVal)}fr`,
-                  `${Math.abs(weights.keywordSimilarity.maxVal)}fr`,
-                  `${Math.abs(weights.seedPaperSimilarity.maxVal)}fr`,
-                  `${Math.abs(weights.referencedBySeedPapers.maxVal)}fr`,
-                  `${Math.abs(weights.referencesSeedPapers.maxVal)}fr`,
+                  `${Math.abs(weights.recentlyPublished.weight)}fr`,
+                  `${Math.abs(weights.citation.weight)}fr`,
+                  `${Math.abs(weights.keywordSimilarity.weight)}fr`,
+                  `${Math.abs(weights.seedPaperSimilarity.weight)}fr`,
+                  `${Math.abs(weights.referencedBySeedPapers.weight)}fr`,
+                  `${Math.abs(weights.referencesSeedPapers.weight)}fr`,
                 ]}
               >
                 <div>Rank</div>
                 <div style={{ paddingLeft: 5, paddingRight: 5 }}>Title</div>
-                <div style={{ paddingLeft: 5, paddingRight: 5 }}>Conference</div>
+                <div style={{ paddingLeft: 5, paddingRight: 5 }}>
+                  Conference
+                </div>
                 <div
                   style={{
                     paddingLeft: 5,
                     paddingRight: 5,
+                    backgroundColor:
+                      weights.mode === "year"
+                        ? "rgba(0, 255, 0, 0.1)"
+                        : weights.mode === "year-ascending"
+                        ? "rgba(255, 0, 0, 0.1)"
+                        : "white",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setWeights({
+                        ...weights,
+                        mode:
+                          weights.mode === "year"
+                            ? "year-ascending"
+                            : weights.mode === "year-ascending"
+                            ? null
+                            : "year",
+                      })
+                    );
                   }}
                 >
                   Year
@@ -205,6 +232,18 @@ const PapersTabularView: React.FC = () => {
                   style={{
                     paddingLeft: 5,
                     paddingRight: 5,
+                    backgroundColor:
+                      weights.mode === "citation"
+                        ? "rgba(0, 255, 0, 0.1)"
+                        : "white",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setWeights({
+                        ...weights,
+                        mode: weights.mode === "citation" ? null : "citation",
+                      })
+                    );
                   }}
                 >
                   Cited By
@@ -213,6 +252,18 @@ const PapersTabularView: React.FC = () => {
                   style={{
                     paddingLeft: 5,
                     paddingRight: 5,
+                    backgroundColor:
+                      weights.mode === "keyword"
+                        ? "rgba(0, 255, 0, 0.1)"
+                        : "white",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setWeights({
+                        ...weights,
+                        mode: weights.mode === "keyword" ? null : "keyword",
+                      })
+                    );
                   }}
                 >
                   Keyword Similarity
@@ -221,6 +272,18 @@ const PapersTabularView: React.FC = () => {
                   style={{
                     paddingLeft: 5,
                     paddingRight: 5,
+                    backgroundColor:
+                      weights.mode === "seed"
+                        ? "rgba(0, 255, 0, 0.1)"
+                        : "white",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setWeights({
+                        ...weights,
+                        mode: weights.mode === "seed" ? null : "seed",
+                      })
+                    );
                   }}
                 >
                   Seed Paper Similarity
@@ -229,14 +292,44 @@ const PapersTabularView: React.FC = () => {
                   style={{
                     paddingLeft: 5,
                     paddingRight: 5,
+                    backgroundColor:
+                      weights.mode === "referenced-by-seed"
+                        ? "rgba(0, 255, 0, 0.1)"
+                        : "white",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setWeights({
+                        ...weights,
+                        mode:
+                          weights.mode === "referenced-by-seed"
+                            ? null
+                            : "referenced-by-seed",
+                      })
+                    );
                   }}
                 >
-                  Referenced by Seed Papers
+                  Cited by Seed Papers
                 </div>
                 <div
                   style={{
                     paddingLeft: 5,
                     paddingRight: 5,
+                    backgroundColor:
+                      weights.mode === "references-seed"
+                        ? "rgba(0, 255, 0, 0.1)"
+                        : "white",
+                  }}
+                  onClick={() => {
+                    dispatch(
+                      actionOverview.setWeights({
+                        ...weights,
+                        mode:
+                          weights.mode === "references-seed"
+                            ? null
+                            : "references-seed",
+                      })
+                    );
                   }}
                 >
                   References Seed Papers
