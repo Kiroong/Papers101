@@ -22,7 +22,7 @@
     "carbon-components": "^10.22.0",
     "carbon-components-react": "^7.22.0",
     "carbon-icons": "^7.0.7",
-    "cytoscape": "^3.16.2",
+    "cytoscape": "^3.17.1",
     "cytoscape-popper": "^1.0.7",
     "d3": "^6.2.0",
     "d3-cloud": "1.2.5",
