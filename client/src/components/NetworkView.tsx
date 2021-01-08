@@ -46,7 +46,7 @@ const NetworkView: React.FC<Props> = ({
                 "background-color":
                   (entry.doi === selectedEntry?.doi && !seedPapers.map(p => p.doi).includes(selectedEntry.doi))
                     ? d3.schemePurples[3][1]
-                    : d3.interpolateBlues(cohesivenesses[seedPapers.indexOf(entry)]),
+                    : d3.interpolateBlues(0.3 + 0.7 * cohesivenesses[seedPapers.indexOf(entry)]),
               },
             })),
             // edges
