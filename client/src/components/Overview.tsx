@@ -21,7 +21,7 @@ const Overview: React.FC = () => {
         <SearchBox />
       </Box>
       <Box fill={true}>
-        <Grid fill={true} rows={["1fr", "1fr"]}>
+        <Grid fill={true} rows={["3fr", "2fr"]}>
           <PapersTabularView />
           <Box fill={true}>
             <Grid fill={true} columns={["1fr", "1fr"]}>

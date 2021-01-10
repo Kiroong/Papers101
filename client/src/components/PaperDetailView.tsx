@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import * as d3 from "d3";
 import React from "react";
 import {
   Box,
@@ -60,12 +60,6 @@ const PaperDetailView = () => {
                     <Text>{entry.year}</Text>
                   </TableCell>
                 </TableRow>
-                <TableRow>
-                  <TableCell scope="row">Keywords</TableCell>
-                  <TableCell>
-                    <Text>{entry.keywords.join("; ")}</Text>
-                  </TableCell>
-                </TableRow>
 
                 <TableRow>
                   <TableCell scope="row">Abstract</TableCell>
@@ -74,6 +68,12 @@ const PaperDetailView = () => {
                       description={entry.abstract}
                       tagColors={tagColors}
                     />
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell scope="row">Keywords</TableCell>
+                  <TableCell>
+                    <Text>{entry.keywords.join("; ")}</Text>
                   </TableCell>
                 </TableRow>
               </TableBody>

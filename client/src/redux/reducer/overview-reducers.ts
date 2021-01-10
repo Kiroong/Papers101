@@ -8,36 +8,23 @@ import { OverviewState, PaperEntry } from "../state/overview";
 const defaultOverviewState: OverviewState = {
   originalPaperEntries: [],
   paperEntries: [],
+  paperEntriesToShow: [], // post-filtered
   keywords: [],
   seedPapers: [],
   markedPapers: [],
   histories: [],
   seedPaperSimsCache: {},
   weights: {
-    recentlyPublished: {
-      maxVal: 0.5,
-    },
-    citation: {
-      maxVal: 0.5,
-    },
-    keywordSimilarity: {
-      maxVal: 1,
-      components: [],
-    },
-    referencedBySeedPapers: {
-      maxVal: 1,
-      components: [],
-    },
-    referencesSeedPapers: {
-      maxVal: 1,
-      components: [],
-    },
-    seedPaperSimilarity: {
-      maxVal: 1,
-      components: [],
-    },
+    recentlyPublished: { weight: 0.5 },
+    citation: { weight: 0.5 },
+    keywordSimilarity: { weight: 1 },
+    referencedBySeedPapers: { weight: 1 },
+    referencesSeedPapers: { weight: 1 },
+    seedPaperSimilarity: { weight: 1 },
+    mode: null,
   },
   filter: null,
+  forceAllKeywords: false,
 };
 
 function updateSortedPaperEntries(
@@ -47,16 +34,20 @@ function updateSortedPaperEntries(
 ) {
   let filtered = state.paperEntries;
   if (state.filter) {
-    filtered = state.originalPaperEntries.filter(entry => state.filter!.year.from <= entry.year && entry.year <= state.filter!.year.to);
+    filtered = state.originalPaperEntries.filter(
+      (entry) =>
+        state.filter!.year.from <= entry.year &&
+        entry.year <= state.filter!.year.to
+    );
     if (state.filter!.authors.length) {
-      filtered = filtered.filter(entry => {
-        for(const author of state.filter!.authors) {
+      filtered = filtered.filter((entry) => {
+        for (const author of state.filter!.authors) {
           if (entry.author.includes(author)) {
             return true;
           }
         }
         return false;
-      })
+      });
     }
     updateKeywordSims = true;
     updateSeedPaperSims = true;
@@ -65,16 +56,20 @@ function updateSortedPaperEntries(
     const seedPaperSimsCache = state.seedPaperSimsCache; // going to mutate it as it's cache
     let newEntry = { ...entry };
     if (updateKeywordSims) {
-      const keywordSims = state.keywords.map((keyword) =>
-        keyword
-          .split("zxcvzxxc")
-          .map(
-            (word) =>
-              (entry.title + ' ' + entry.abstract)
-                .toLowerCase()
-                .split(word.toLowerCase()).length - 1
-          )
-          .reduce((a, b) => a + b)
+      const keywordSims = state.keywords.map(
+        (keyword) =>
+          Math.min(
+            5,
+            keyword
+              .split("zxcvzxxc")
+              .map(
+                (word) =>
+                  (entry.title + " " + entry.abstract)
+                    .toLowerCase()
+                    .split(word.toLowerCase()).length - 1
+              )
+              .reduce((a, b) => a + b)
+          ) / 5
       );
       newEntry = { ...newEntry, keywordSims };
     }
@@ -152,51 +147,116 @@ function updateSortedPaperEntries(
     ),
   }));
 
-  const inner = (as: number[], bs: number[]) =>
-    as.reduce((acc, a, i) => acc + a * bs[i], 0);
-
+  const weights = state.weights;
   const withScore = normalized.map((entry) => ({
     ...entry,
-    score:
-      entry.recentlyPublished * state.weights.recentlyPublished.maxVal +
-      entry.citation * state.weights.citation.maxVal +
-      inner(
-        entry.keywordSims,
-        state.weights.keywordSimilarity.components.map(
-          (comp) => comp.weight / 100
-        )
-      ) *
-        state.weights.keywordSimilarity.maxVal +
-      inner(
-        entry.seedPaperSims,
-        state.weights.seedPaperSimilarity.components.map(
-          (comp) => comp.weight / 100
-        )
-      ) *
-        state.weights.seedPaperSimilarity.maxVal +
-      inner(
-        entry.referencesSeedPapers,
-        state.weights.referencesSeedPapers.components.map(
-          (comp) => comp.weight / 100
-        )
-      ) *
-        state.weights.referencesSeedPapers.maxVal +
-      inner(
-        entry.referencedBySeedPapers,
-        state.weights.referencedBySeedPapers.components.map(
-          (comp) => comp.weight / 100
-        )
-      ) *
-        state.weights.referencedBySeedPapers.maxVal,
+    score: (() => {
+      const scoreRecentlyPublished =
+        entry.recentlyPublished * state.weights.recentlyPublished.weight;
+      const scoreKeyword =
+        entry.keywordSims.reduce((a, b) => a + b, 0) *
+        state.weights.keywordSimilarity.weight;
+      const scoreSeedPapers =
+        entry.seedPaperSims.reduce((a, b) => a + b, 0) *
+        state.weights.seedPaperSimilarity.weight;
+      const scoreCitation = entry.citation * state.weights.citation.weight;
+      const scoreReferencesSeedPapers =
+        entry.referencesSeedPapers.reduce((a, b) => a + b, 0) *
+        state.weights.referencesSeedPapers.weight;
+      const scoreReferencedBySeedPapers =
+        entry.referencedBySeedPapers.reduce((a, b) => a + b, 0) *
+        state.weights.referencedBySeedPapers.weight;
+
+      if (!weights.mode) {
+        return d3.sum([
+          scoreRecentlyPublished,
+          scoreKeyword,
+          scoreSeedPapers,
+          scoreCitation,
+          scoreReferencesSeedPapers,
+          scoreReferencedBySeedPapers,
+        ]);
+      } else if (weights.mode === "keyword") {
+        return d3.sum([
+          1e1 * scoreRecentlyPublished,
+          1e5 * scoreKeyword,
+          1e4 * scoreSeedPapers,
+          1 * scoreCitation,
+          1e2 * scoreReferencesSeedPapers,
+          1e3 * scoreReferencedBySeedPapers,
+        ]);
+      } else if (weights.mode === "seed") {
+        return d3.sum([
+          1e1 * scoreRecentlyPublished,
+          1e4 * scoreKeyword,
+          1e5 * scoreSeedPapers,
+          1 * scoreCitation,
+          1e2 * scoreReferencesSeedPapers,
+          1e3 * scoreReferencedBySeedPapers,
+        ]);
+      } else if (weights.mode === "referenced-by-seed") {
+        return d3.sum([
+          1e1 * scoreRecentlyPublished,
+          1e2 * scoreKeyword,
+          1e3 * scoreSeedPapers,
+          1 * scoreCitation,
+          1e4 * scoreReferencesSeedPapers,
+          1e5 * scoreReferencedBySeedPapers,
+        ]);
+      } else if (weights.mode === "references-seed") {
+        return d3.sum([
+          1e1 * scoreRecentlyPublished,
+          1e2 * scoreKeyword,
+          1e3 * scoreSeedPapers,
+          1 * scoreCitation,
+          1e5 * scoreReferencesSeedPapers,
+          1e4 * scoreReferencedBySeedPapers,
+        ]);
+      } else if (weights.mode === "year") {
+        const other = d3.sum([
+          1 * scoreKeyword,
+          1 * scoreSeedPapers,
+          1 * scoreReferencesSeedPapers,
+          1 * scoreReferencedBySeedPapers,
+        ]);
+        return other > 0 ? scoreRecentlyPublished * 1e2 + other : 0;
+      } else if (weights.mode === "year-ascending") {
+        const other = d3.sum([
+          1 * scoreKeyword,
+          1 * scoreSeedPapers,
+          1 * scoreReferencesSeedPapers,
+          1 * scoreReferencedBySeedPapers,
+        ]);
+        return other > 0 ? (1-scoreRecentlyPublished) * 1e2 + other : 0;
+      } else if (weights.mode === "citation") {
+        const other = d3.sum([
+          1 * scoreKeyword,
+          1 * scoreSeedPapers,
+          1 * scoreReferencesSeedPapers,
+          1 * scoreReferencedBySeedPapers,
+        ]);
+        return other > 0 ? scoreCitation * 1e2 + other : 0;
+      } else {
+        return 0;
+      }
+    })(),
   }));
 
+  let sorted: (typeof withScore);
   if (state.keywords.length === 0 && state.seedPapers.length === 0) {
-    return withScore;
+    sorted = withScore;
   } else {
-    const sorted = withScore.sort((a, b) =>
+    sorted = withScore.sort((a, b) =>
       a.score === b.score ? b.year - a.year : b.score - a.score
     );
-    return sorted;
+  }
+  return {
+    paperEntries: sorted,
+    paperEntriesToShow: sorted.filter(entry => {
+      return !state.seedPapers.map(p => p.doi).includes(entry.doi)
+      && (!state.forceAllKeywords || entry.keywordSims.reduce((a, b) => a * b, 1) > 0)
+    }).slice(0, 30)
+
   }
 }
 
@@ -225,7 +285,7 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, false),
+        ...updateSortedPaperEntries(nextState, false, false),
       };
     case getType(actionOverview.setKeywords): {
       const keywords = action.payload;
@@ -235,19 +295,13 @@ export const overviewReducer = (
         keywords,
         weights: {
           ...state.weights,
-          keywordSimilarity: {
-            maxVal: 1,
-            components: keywords.map((keyword) => ({
-              keyword,
-              weight: Math.floor((1 / keywords.length) * 100),
-            })),
-          },
+          keywordSimilarity: { weight: 1 },
         },
         histories: [...state.histories, state],
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, true, false),
+        ...updateSortedPaperEntries(nextState, true, false),
       };
     }
     case getType(actionOverview.setSeedPapers): {
@@ -259,30 +313,18 @@ export const overviewReducer = (
           ...state.weights,
           seedPaperSimilarity: {
             ...state.weights.seedPaperSimilarity,
-            components: seedPapers.map((entry) => ({
-              entry,
-              weight: Math.floor((1 / seedPapers.length) * 100),
-            })),
           },
           referencedBySeedPapers: {
             ...state.weights.referencedBySeedPapers,
-            components: seedPapers.map((entry) => ({
-              entry,
-              weight: Math.floor((1 / seedPapers.length) * 100),
-            })),
           },
           referencesSeedPapers: {
             ...state.weights.referencesSeedPapers,
-            components: seedPapers.map((entry) => ({
-              entry,
-              weight: Math.floor((1 / seedPapers.length) * 100),
-            })),
           },
         },
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, true),
+        ...updateSortedPaperEntries(nextState, false, true),
         histories: [...state.histories, state],
       };
     }
@@ -310,23 +352,33 @@ export const overviewReducer = (
       };
       return {
         ...nextState,
-        paperEntries: updateSortedPaperEntries(nextState, false, false),
+        ...updateSortedPaperEntries(nextState, false, false),
       };
+    }
+    case getType(actionOverview.setFilter): {
+      const filter = action.payload;
+      const nextState: OverviewState = {
+        ...state,
+        filter,
+        histories: [...state.histories, state],
+      };
+      return {
+        ...nextState,
+        ...updateSortedPaperEntries(nextState, false, false),
+      };
+    }
+    case getType(actionOverview.setForceAllKeywords): {
+      const nextState = {
+        ...state,
+        forceAllKeywords: action.payload,
+        histories: [...state.histories, state],
+      }
+      return {
+        ...nextState,
+        ...updateSortedPaperEntries(nextState, false, false),
+      }
     }
     default:
       return state;
-    case getType(actionOverview.setFilter):
-      {
-        const filter = action.payload;
-        const nextState: OverviewState = {
-          ...state,
-          filter,
-          histories: [...state.histories, state],
-        }
-        return {
-          ...nextState,
-          paperEntries: updateSortedPaperEntries(nextState, false, false),
-        }
-      }
   }
 };

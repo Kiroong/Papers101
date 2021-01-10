@@ -20,13 +20,13 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
         <div>Year</div>
         <input
           type="number"
-          value={weights.recentlyPublished.maxVal}
+          value={weights.recentlyPublished.weight}
           onChange={(e) =>
             setWeights({
               ...weights,
               recentlyPublished: {
                 ...weights.recentlyPublished,
-                maxVal: +e.target.value,
+                weight: +e.target.value,
               },
             })
           }
@@ -35,13 +35,13 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
         <div>Cited By</div>
         <input
           type="number"
-          value={weights.citation.maxVal}
+          value={weights.citation.weight}
           onChange={(e) =>
             setWeights({
               ...weights,
               citation: {
                 ...weights.citation,
-                maxVal: +e.target.value,
+                weight: +e.target.value,
               },
             })
           }
@@ -50,13 +50,13 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
         <div>Keyword Similarities</div>
         <input
           type="number"
-          value={weights.keywordSimilarity.maxVal}
+          value={weights.keywordSimilarity.weight}
           onChange={(e) =>
             setWeights({
               ...weights,
               keywordSimilarity: {
                 ...weights.keywordSimilarity,
-                maxVal: +e.target.value,
+                weight: +e.target.value,
               },
             })
           }
@@ -91,13 +91,13 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
         <div>Seed paper Similarities</div>
         <input
           type="number"
-          value={weights.seedPaperSimilarity.maxVal}
+          value={weights.seedPaperSimilarity.weight}
           onChange={(e) =>
             setWeights({
               ...weights,
               seedPaperSimilarity: {
                 ...weights.seedPaperSimilarity,
-                maxVal: +e.target.value,
+                weight: +e.target.value,
               },
             })
           }
@@ -141,13 +141,13 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
         <div>Referenced by Seed papers</div>
         <input
           type="number"
-          value={weights.referencedBySeedPapers.maxVal}
+          value={weights.referencedBySeedPapers.weight}
           onChange={(e) =>
             setWeights({
               ...weights,
               referencedBySeedPapers: {
                 ...weights.referencedBySeedPapers,
-                maxVal: +e.target.value,
+                weight: +e.target.value,
               },
             })
           }
@@ -193,13 +193,13 @@ const AdjustWeightModal: React.FC<Props> = ({ onClose }) => {
         <div>References Seed papers</div>
         <input
           type="number"
-          value={weights.referencesSeedPapers.maxVal}
+          value={weights.referencesSeedPapers.weight}
           onChange={(e) =>
             setWeights({
               ...weights,
               referencesSeedPapers: {
                 ...weights.referencesSeedPapers,
-                maxVal: +e.target.value,
+                weight: +e.target.value,
               },
             })
           }

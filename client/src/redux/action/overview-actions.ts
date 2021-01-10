@@ -32,6 +32,10 @@ const unitActions = {
     "OVERVIEW/SET_FILTER",
     (filter: EntryFilter | null) => filter
   )(),
+  setForceAllKeywords: createAction(
+    "OVERVIEW/SET_FORCE_ALL_KEYWORDS",
+    (forceAllKeywords: boolean) => forceAllKeywords
+  )(),
 
 };
 

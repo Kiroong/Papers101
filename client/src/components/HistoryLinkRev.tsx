@@ -1,5 +1,5 @@
 import * as Icons from 'grommet-icons';
-import { Box } from 'grommet'
+import { Box, Button } from 'grommet'
 import React, { useRef, useEffect, useState, Ref } from 'react'
 import { PaperEntry } from '../redux/state/overview'
 import {ReactComponent as KeywordIcon} from './keyword-research.svg';
@@ -38,6 +38,7 @@ const HistoryLink: React.FC<Props> = ({
     numHistories,
     hoveredEntry,
     setHoveredEntry,
+    onSelectHistory,
 }) => {
     const svgHeight: number = cellHeight * 30
     const [prevHistoryLength, setPrevHistoryLength] = useState<number>(0)
@@ -228,7 +229,6 @@ const HistoryLink: React.FC<Props> = ({
     useEffect(() => {
         //console.log('hover')
 
-        if (hoveredEntry !== null) {
             const topKDois: string[] = histories[histories.length - 1].slice(0, topk).map(d => d.doi)
             const _root = d3
                 .select(root.current)
@@ -248,6 +248,7 @@ const HistoryLink: React.FC<Props> = ({
                     }
                 })
                 
+        if (hoveredEntry !== null) {
             _root
                 .selectAll('.parallel')
                 .filter((d: any) => d.doi == hoveredEntry.doi)
@@ -268,7 +269,9 @@ const HistoryLink: React.FC<Props> = ({
                 className={'history-header'}
                 style={{ width: svgWidth, height: offsetHeight, display: "flex", justifyContent: "flex-end" }}
             >
-                {[...historiesDiff.slice(-numHistories)].map((diff) => {
+                {[...historiesDiff.slice(-numHistories)].map((diff, index, nodes) => {
+                    const baseIndex = historiesDiff.indexOf(nodes[0]);
+                    const restore = () => onSelectHistory(baseIndex + index);
                     return (
                         <div
                             style={{
@@ -289,6 +292,8 @@ const HistoryLink: React.FC<Props> = ({
                                         on={["hover"]}
                                     >
                                         Added a keyword: {diff.keywords?.join(', ') || ''}
+                                        <br />
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "-K" ? (
@@ -299,6 +304,8 @@ const HistoryLink: React.FC<Props> = ({
                                         on={["hover"]}
                                     >
                                         Deleted a keyword: {diff.keywords?.join(', ') || ''}
+                                        <br />
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "+S" ? (
@@ -311,6 +318,8 @@ const HistoryLink: React.FC<Props> = ({
                                         on={["hover"]}
                                     >
                                         Added a paper: {diff.papers?.map(p => p.title).join(', ') || ''}
+                                        <br />
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "-S" ? (
@@ -323,6 +332,8 @@ const HistoryLink: React.FC<Props> = ({
                                         on={["hover"]}
                                     >
                                         Deleted a paper: {diff.papers?.map(p => p.title).join(', ') || ''}
+                                        <br />
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "CW" ? (
@@ -335,6 +346,8 @@ const HistoryLink: React.FC<Props> = ({
                                             on={["hover"]}
                                         >
                                             Changed weight or filter
+                                            <br />
+                                            {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                         </Popup>
 
                                     ) : <div />

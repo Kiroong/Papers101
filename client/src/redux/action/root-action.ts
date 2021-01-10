@@ -9,7 +9,7 @@ import {
 
 export const setHoveredEntry = createAction(
   "SET_HOVERED_ENTRY",
-  (paperEntry: PaperEntry) => paperEntry
+  (paperEntry: PaperEntry | null) => paperEntry
 )();
 
 export const setSelectedEntry = createAction(
