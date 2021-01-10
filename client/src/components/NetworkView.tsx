@@ -45,7 +45,9 @@ const NetworkView: React.FC<Props> = ({
                 "font-size": "0.5em",
                 "background-color":
                   (entry.doi === selectedEntry?.doi && !seedPapers.map(p => p.doi).includes(selectedEntry.doi))
-                    ? d3.schemePurples[3][1]
+                    ? d3.schemeGreys[4][1]
+                    : cohesivenesses[seedPapers.indexOf(entry)] === undefined
+                    ? d3.interpolatePurples(0.5)
                     : d3.interpolateBlues(0.3 + 0.7 * cohesivenesses[seedPapers.indexOf(entry)]),
               },
             })),
@@ -104,7 +106,7 @@ const NetworkView: React.FC<Props> = ({
         })
       );
     }
-  }, [networkGraphContainer, seedPapers, selectedEntry]);
+  }, [networkGraphContainer, seedPapers, selectedEntry, cohesivenesses]);
 
   useLayoutEffect(() => {
     if (cy) {
