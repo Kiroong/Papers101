@@ -293,7 +293,7 @@ const HistoryLink: React.FC<Props> = ({
                                     >
                                         Added a keyword: {diff.keywords?.join(', ') || ''}
                                         <br />
-                                        {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />}
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "-K" ? (
@@ -305,7 +305,7 @@ const HistoryLink: React.FC<Props> = ({
                                     >
                                         Deleted a keyword: {diff.keywords?.join(', ') || ''}
                                         <br />
-                                        {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />}
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "+S" ? (
@@ -319,7 +319,7 @@ const HistoryLink: React.FC<Props> = ({
                                     >
                                         Added a paper: {diff.papers?.map(p => p.title).join(', ') || ''}
                                         <br />
-                                        {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />}
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "-S" ? (
@@ -333,7 +333,7 @@ const HistoryLink: React.FC<Props> = ({
                                     >
                                         Deleted a paper: {diff.papers?.map(p => p.title).join(', ') || ''}
                                         <br />
-                                        {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />}
+                                        {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                     </Popup>
 
                                 ) : diff.type === "CW" ? (
@@ -347,7 +347,7 @@ const HistoryLink: React.FC<Props> = ({
                                         >
                                             Changed weight or filter
                                             <br />
-                                            {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />}
+                                            {/* {baseIndex + index > 0 && <Button onClick={restore} size="small" label="revert" />} */}
                                         </Popup>
 
                                     ) : <div />
