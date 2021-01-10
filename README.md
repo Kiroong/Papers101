@@ -2,6 +2,8 @@
 
 ![papers101-teaser](https://user-images.githubusercontent.com/6987894/104116581-1c7dc300-535d-11eb-97bb-4d5f7645e7db.png)
 
+An overview of Papers 101, an interactive system that accelerates the discovery of literature for novice researchers. (A1) Keyword Search Box and Keyword List which receives search keywords and list them;(A2) Recommended keywords which recommend other relevant key-words to current search query;(B1) Ranking view which visualizes the ranking of the papers;(B2) History view which visualizes up to five previous rankings histories in parallel coordinates;(C) Citation relationship which enables users to validate the cohesiveness of the seed paper set;(D) Paper detail which provides additional information of the selected paper; and (E) Seed paper list which shows a list of seed papers selected by users.
+
 ## Introduction
 
 A literature review is a critical, but daunting task for novice researchers. Once the research topic is decided, the literature review process should follow; researchers need to review papers from various perspectives and synthesize the knowledge. However, novice researchers often face difficulties even at the initial phase, browsing relevant work from academic databases and choosing must-read items among them. This can be for many reasons such as vague ideas about appropriate search terms and less knowledge on exploiting academic metadata.
