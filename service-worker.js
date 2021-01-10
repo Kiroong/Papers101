@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/CHIpotle/precache-manifest.80296effc6cebca62606875e17bbf50c.js"
+  "/CHIpotle/precache-manifest.96ce49c66ad8b30c2df88fa14f220aa0.js"
 );
 
 self.addEventListener('message', (event) => {

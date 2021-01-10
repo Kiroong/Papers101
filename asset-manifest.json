@@ -1,22 +1,26 @@
 {
   "files": {
-    "main.css": "/CHIpotle/static/css/main.c65af6a9.chunk.css",
-    "main.js": "/CHIpotle/static/js/main.75ba7433.chunk.js",
-    "main.js.map": "/CHIpotle/static/js/main.75ba7433.chunk.js.map",
+    "main.css": "/CHIpotle/static/css/main.0a522e6c.chunk.css",
+    "main.js": "/CHIpotle/static/js/main.459149ae.chunk.js",
+    "main.js.map": "/CHIpotle/static/js/main.459149ae.chunk.js.map",
     "runtime-main.js": "/CHIpotle/static/js/runtime-main.9c0f4255.js",
     "runtime-main.js.map": "/CHIpotle/static/js/runtime-main.9c0f4255.js.map",
-    "static/js/2.b7a190e5.chunk.js": "/CHIpotle/static/js/2.b7a190e5.chunk.js",
-    "static/js/2.b7a190e5.chunk.js.map": "/CHIpotle/static/js/2.b7a190e5.chunk.js.map",
+    "static/css/2.f1b50ea8.chunk.css": "/CHIpotle/static/css/2.f1b50ea8.chunk.css",
+    "static/js/2.96e56514.chunk.js": "/CHIpotle/static/js/2.96e56514.chunk.js",
+    "static/js/2.96e56514.chunk.js.map": "/CHIpotle/static/js/2.96e56514.chunk.js.map",
     "index.html": "/CHIpotle/index.html",
-    "precache-manifest.80296effc6cebca62606875e17bbf50c.js": "/CHIpotle/precache-manifest.80296effc6cebca62606875e17bbf50c.js",
+    "precache-manifest.96ce49c66ad8b30c2df88fa14f220aa0.js": "/CHIpotle/precache-manifest.96ce49c66ad8b30c2df88fa14f220aa0.js",
     "service-worker.js": "/CHIpotle/service-worker.js",
-    "static/css/main.c65af6a9.chunk.css.map": "/CHIpotle/static/css/main.c65af6a9.chunk.css.map",
-    "static/js/2.b7a190e5.chunk.js.LICENSE.txt": "/CHIpotle/static/js/2.b7a190e5.chunk.js.LICENSE.txt"
+    "static/css/2.f1b50ea8.chunk.css.map": "/CHIpotle/static/css/2.f1b50ea8.chunk.css.map",
+    "static/css/main.0a522e6c.chunk.css.map": "/CHIpotle/static/css/main.0a522e6c.chunk.css.map",
+    "static/js/2.96e56514.chunk.js.LICENSE.txt": "/CHIpotle/static/js/2.96e56514.chunk.js.LICENSE.txt",
+    "static/media/keyword-research.27e549d5.svg": "/CHIpotle/static/media/keyword-research.27e549d5.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.9c0f4255.js",
-    "static/js/2.b7a190e5.chunk.js",
-    "static/css/main.c65af6a9.chunk.css",
-    "static/js/main.75ba7433.chunk.js"
+    "static/css/2.f1b50ea8.chunk.css",
+    "static/js/2.96e56514.chunk.js",
+    "static/css/main.0a522e6c.chunk.css",
+    "static/js/main.459149ae.chunk.js"
   ]
 }
