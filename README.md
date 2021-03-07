@@ -1,4 +1,6 @@
-# Papers101
+# Papers101: Supporting the Discovery Process in the Literature Review Workflow for Novice Researchers
+
+To appear at the Proceedings of IEEE Pacific Visualization 2021.
 
 ![papers101-teaser](https://user-images.githubusercontent.com/6987894/104116581-1c7dc300-535d-11eb-97bb-4d5f7645e7db.png)
 
